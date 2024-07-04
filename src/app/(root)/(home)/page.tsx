@@ -1,7 +1,9 @@
+import { UserButton } from "@clerk/nextjs";
+
 export default function page() {
   return (
     <div>
-      <h1 className="h1-bold">Hello next.js 14</h1>
+      <UserButton />
     </div>
   );
 }
