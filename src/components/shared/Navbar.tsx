@@ -19,7 +19,7 @@ export default function Navbar() {
         </p>
       </Link>
       GlobalSearch
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-4 text-dark-100 dark:text-light-900">
         <Theme />
         <SignedIn>
           <UserButton

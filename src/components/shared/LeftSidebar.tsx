@@ -6,6 +6,8 @@ import {
   LogInIcon,
   StarIcon,
   TagsIcon,
+  UserCog,
+  UserIcon,
   UsersIcon,
   UsersRoundIcon,
 } from "lucide-react";
@@ -13,6 +15,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
 import { Button } from "../ui/button";
+import { SignedOut } from "@clerk/clerk-react";
 
 interface DataLeftSidebarType {
   icon: ReactNode;
@@ -61,35 +64,47 @@ const DataLeftSidebar: DataLeftSidebarType[] = [
 export default function LeftSidebar() {
   const pathname = usePathname();
   return (
-    <div className="fixed md:w-60 w-20 h-screen pt-[88px] max-sm:hidden">
-      <div className="flex flex-col h-full py-10 justify-between gap-2 md:w-[90%] w-[70%] mx-auto">
+    <section className="group fixed left-0 background-light900_dark200 light-border top-0 h-screen flex flex-col justify-between overflow-y-auto border-r md:p-6 p-3 !pt-36 shadow-light-300 dark:shadow-none max-sm:hidden max-md:w-[82px] peer-hover:hidden hover:w-[266px] lg:w-[266px]">
+      <div className="flex flex-col h-full gap-2 justify-between">
         <div>
           {DataLeftSidebar.map((item) => (
             <Link
-              className={`flex gap-2 p-4 rounded  ${
-                pathname === item.href ? "bg-primary-500 font-semibold" : ""
+              className={`flex gap-2 p-4 rounded-lg dark:text-light-900 text-black ${
+                pathname === item.href
+                  ? "primary-gradient font-semibold !text-light-900"
+                  : ""
               }`}
               key={item.label}
               href={item.href}
             >
               <span>{item.icon}</span>
-              <span className="max-md:hidden">{item.label}</span>
+              <span className="max-md:hidden group-hover:block">
+                {item.label}
+              </span>
             </Link>
           ))}
         </div>
-        {/* <div className="flex flex-col gap-2">
-          <Link href="/sign-in">
-            <span>
-              <LogInIcon />
-            </span>
-            <span className="max-md:hidden">Login</span>
-          </Link>
-          <Link href="/sign-up">
-            <span></span>
-            <span className="max-md:hidden">Sign Up</span>
-          </Link>
-        </div> */}
+        <SignedOut>
+          <div className="flex flex-col gap-3">
+            <Link href="/sign-in">
+              <Button className="flex gap-1 small-medium btn-secondary !text-primary-500 font-semibold min-h-[41px] w-full rounded-lg px-4 py-3 shadow-none">
+                <span className="md:hidden group-hover:hidden">
+                  <UserIcon />
+                </span>
+                <span className="max-md:hidden group-hover:block">Log In</span>
+              </Button>
+            </Link>
+            <Link href="/sign-up">
+              <Button className="flex gap-1 small-medium light-border-2 text-black dark:text-white font-semibold btn-tertiary min-h-[41px] w-full rounded-lg border px-4 py-3 shadow-none">
+                <span className="md:hidden group-hover:hidden">
+                  <UserCog />
+                </span>
+                <span className="max-md:hidden group-hover:block">Sign Up</span>
+              </Button>
+            </Link>
+          </div>
+        </SignedOut>
       </div>
-    </div>
+    </section>
   );
 }
