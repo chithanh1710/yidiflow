@@ -7,7 +7,7 @@ import {
   useEffect,
   useContext,
 } from "react";
-import { IThemeContextType } from "../types/IThemeContextType";
+import { IThemeContextType } from "../interfaces/IThemeContextType";
 
 const ThemeContext = createContext<IThemeContextType | undefined>(undefined);
 
@@ -45,10 +45,16 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       document.documentElement.classList.remove("light");
       document.documentElement.classList.add("dark");
       localStorage.setItem("theme", "dark");
-    } else {
+    } else if (mode === "light") {
       document.documentElement.classList.remove("dark");
       document.documentElement.classList.add("light");
       localStorage.setItem("theme", "light");
+    } else {
+      const userPrefersDark =
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const userMode = userPrefersDark ? "dark" : "light";
+      setMode(userMode);
     }
   }, [mode]);
 
