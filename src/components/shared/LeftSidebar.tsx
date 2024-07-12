@@ -64,7 +64,7 @@ const DataLeftSidebar: DataLeftSidebarType[] = [
 export default function LeftSidebar() {
   const pathname = usePathname();
   return (
-    <section className="group fixed left-0 background-light900_dark200 light-border top-0 h-screen flex flex-col justify-between overflow-y-auto border-r md:p-6 p-3 !pt-36 shadow-light-300 dark:shadow-none max-sm:hidden max-md:w-[82px] peer-hover:hidden hover:w-[266px] lg:w-[266px]">
+    <section className="group fixed left-0 background-light900_dark200 light-border top-0 h-screen flex flex-col justify-between custom-scrollbar overflow-y-auto border-r md:p-6 p-3 !pt-36 shadow-light-300 dark:shadow-none max-sm:hidden max-md:w-[82px] peer-hover:hidden hover:w-[266px] lg:w-[266px]">
       <div className="flex flex-col h-full gap-2 justify-between">
         <div>
           {DataLeftSidebar.map((item) => (
