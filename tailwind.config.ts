@@ -1,5 +1,6 @@
-/** @type {import('tailwindcss').Config} */
-module.exports = {
+import type { Config } from "tailwindcss";
+
+const config = {
   darkMode: ["class"],
   content: [
     "./pages/**/*.{ts,tsx}",
@@ -7,6 +8,7 @@ module.exports = {
     "./app/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
   ],
+  prefix: "",
   theme: {
     container: {
       center: true,
@@ -38,10 +40,6 @@ module.exports = {
         },
         "accent-blue": "#1DA1F2",
       },
-      fontFamily: {
-        inter: ["var(--font-inter)"],
-        spaceGrotesk: ["var(--font-spaceGrotesk)"],
-      },
       boxShadow: {
         "light-100":
           "0px 12px 20px 0px rgba(184, 184, 184, 0.03), 0px 6px 12px 0px rgba(184, 184, 184, 0.02), 0px 2px 4px 0px rgba(184, 184, 184, 0.03)",
@@ -49,6 +47,10 @@ module.exports = {
         "light-300": "-10px 10px 20px 0px rgba(218, 213, 213, 0.10)",
         "dark-100": "0px 2px 10px 0px rgba(46, 52, 56, 0.10)",
         "dark-200": "2px 0px 20px 0px rgba(39, 36, 36, 0.04)",
+      },
+      fontFamily: {
+        inter: ["var(--font-inter)"],
+        spaceGrotesk: ["var(--font-spaceGrotesk)"],
       },
       backgroundImage: {
         "auth-dark": "url('/assets/images/auth-dark.png')",
@@ -59,12 +61,12 @@ module.exports = {
       },
       keyframes: {
         "accordion-down": {
-          from: { height: 0 },
+          from: { height: "0" },
           to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
           from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: 0 },
+          to: { height: "0" },
         },
       },
       animation: {
@@ -74,4 +76,6 @@ module.exports = {
     },
   },
   plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
-};
+} satisfies Config;
+
+export default config;

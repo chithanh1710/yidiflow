@@ -2,6 +2,7 @@ import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import Theme from "./Theme";
 
 export default function Navbar() {
   return (
@@ -18,8 +19,8 @@ export default function Navbar() {
         </p>
       </Link>
       GlobalSearch
-      <div>
-        Theme
+      <div className="flex items-center gap-1">
+        <Theme />
         <SignedIn>
           <UserButton
             appearance={{
