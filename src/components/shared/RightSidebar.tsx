@@ -1,6 +1,6 @@
-import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
+import Image from "next/image";
 
 const hotQuestions = [
   {
@@ -46,7 +46,7 @@ const popularTags = [
 
 export default function RightSidebar() {
   return (
-    <section className="w-[330px] h-screen custom-scrollbar overflow-y-auto background-light900_dark200 light-border border-l shadow-light-300 dark:shadow-none fixed top-0 right-0 p-6 pt-36 max-xl:hidden ">
+    <section className="sticky w-[330px] h-screen flex-shrink-0 custom-scrollbar overflow-y-auto background-light900_dark200 light-border border-l shadow-light-300 dark:shadow-none top-0 right-0 p-6 pt-36 max-xl:hidden ">
       <div>
         <h3 className="h3-bold text-dark200_light900">Hot Network</h3>
         <div className="flex flex-col gap-4 mt-4">
@@ -60,7 +60,12 @@ export default function RightSidebar() {
                 {item.title}
               </span>
               <span className="body-medium text-dark500_light700">
-                <ChevronRight />
+                <Image
+                  alt="Chevron right icon"
+                  src="/assets/icons/chevron-right.svg"
+                  width={26}
+                  height={26}
+                />
               </span>
             </Link>
           ))}

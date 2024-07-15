@@ -1,61 +1,49 @@
 "use client";
-import {
-  BriefcaseBusinessIcon,
-  CircleHelpIcon,
-  HomeIcon,
-  LogInIcon,
-  StarIcon,
-  TagsIcon,
-  UserCog,
-  UserIcon,
-  UsersIcon,
-  UsersRoundIcon,
-} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ReactNode } from "react";
 import { Button } from "../ui/button";
 import { SignedOut } from "@clerk/clerk-react";
+import Image from "next/image";
 
 interface DataLeftSidebarType {
-  icon: ReactNode;
+  icon: string;
   href: string;
   label: string;
 }
 
 const DataLeftSidebar: DataLeftSidebarType[] = [
   {
-    icon: <HomeIcon />,
+    icon: "assets/icons/home.svg",
     href: "/",
     label: "Home",
   },
   {
-    icon: <UsersRoundIcon />,
+    icon: "assets/icons/users.svg",
     href: "/community",
     label: "Community",
   },
   {
-    icon: <StarIcon />,
+    icon: "assets/icons/star.svg",
     href: "/collections",
     label: "Collections",
   },
   {
-    icon: <BriefcaseBusinessIcon />,
+    icon: "assets/icons/suitcase.svg",
     href: "/find-jobs",
     label: "Find Jobs",
   },
   {
-    icon: <TagsIcon />,
+    icon: "assets/icons/tag.svg",
     href: "/tags",
     label: "Tags",
   },
   {
-    icon: <UsersIcon />,
+    icon: "assets/icons/user.svg",
     href: "/communities",
     label: "Communities",
   },
   {
-    icon: <CircleHelpIcon />,
+    icon: "assets/icons/question.svg",
     href: "/ask-a-question",
     label: "Ask a Question",
   },
@@ -64,12 +52,12 @@ const DataLeftSidebar: DataLeftSidebarType[] = [
 export default function LeftSidebar() {
   const pathname = usePathname();
   return (
-    <section className="group fixed left-0 background-light900_dark200 light-border top-0 h-screen flex flex-col justify-between custom-scrollbar overflow-y-auto border-r md:p-6 p-3 !pt-36 shadow-light-300 dark:shadow-none max-sm:hidden max-md:w-[82px] peer-hover:hidden hover:w-[266px] lg:w-[266px]">
+    <section className="flex-shrink-0 sticky left-0 top-0 background-light900_dark200 light-border  h-screen flex flex-col justify-between custom-scrollbar overflow-y-auto border-r md:p-6 p-3 !pt-36 shadow-light-300 dark:shadow-none max-sm:hidden max-md:w-[82px] lg:w-[266px]">
       <div className="flex flex-col h-full gap-2 justify-between">
         <div>
           {DataLeftSidebar.map((item) => (
             <Link
-              className={`flex gap-2 p-4 rounded-lg dark:text-light-900 text-black ${
+              className={`flex items-center gap-5 p-4 rounded-lg dark:text-light-900 text-black ${
                 pathname === item.href
                   ? "primary-gradient font-semibold !text-light-900"
                   : ""
@@ -77,10 +65,14 @@ export default function LeftSidebar() {
               key={item.label}
               href={item.href}
             >
-              <span>{item.icon}</span>
-              <span className="max-md:hidden group-hover:block">
-                {item.label}
-              </span>
+              <Image
+                alt={`${item.label + item.icon}`}
+                src={item.icon}
+                width={26}
+                height={26}
+                className={`${pathname === item.href ? "" : "invert-colors"}`}
+              />
+              <p className="max-md:hidden">{item.label}</p>
             </Link>
           ))}
         </div>
@@ -88,18 +80,30 @@ export default function LeftSidebar() {
           <div className="flex flex-col gap-3">
             <Link href="/sign-in">
               <Button className="flex gap-1 small-medium btn-secondary !text-primary-500 font-semibold min-h-[41px] w-full rounded-lg px-4 py-3 shadow-none">
-                <span className="md:hidden group-hover:hidden">
-                  <UserIcon />
+                <span className="md:hidden">
+                  <Image
+                    alt={`user icon`}
+                    src="/assets/icons/account.svg"
+                    width={26}
+                    height={26}
+                    className="invert-colors"
+                  />
                 </span>
-                <span className="max-md:hidden group-hover:block">Log In</span>
+                <span className="max-md:hidden">Log In</span>
               </Button>
             </Link>
             <Link href="/sign-up">
               <Button className="flex gap-1 small-medium light-border-2 text-black dark:text-white font-semibold btn-tertiary min-h-[41px] w-full rounded-lg border px-4 py-3 shadow-none">
-                <span className="md:hidden group-hover:hidden">
-                  <UserCog />
+                <span className="md:hidden">
+                  <Image
+                    alt={`user icon`}
+                    src="/assets/icons/sign-up.svg"
+                    width={26}
+                    height={26}
+                    className="invert-colors"
+                  />
                 </span>
-                <span className="max-md:hidden group-hover:block">Sign Up</span>
+                <span className="max-md:hidden">Sign Up</span>
               </Button>
             </Link>
           </div>
