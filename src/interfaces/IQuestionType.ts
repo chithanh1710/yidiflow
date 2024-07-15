@@ -1,13 +1,13 @@
 export interface IQuestionType {
-  _id: number;
+  _id: string;
   title: string;
   tags: {
-    _id: number;
+    _id: string;
     name: string;
   }[];
-  author: string;
+  author: { _id: string; picture: string; name: string };
   upVotes: number;
-  answers: number;
+  answers: Array<Object>;
   views: number;
-  createAt: string;
+  createAt: Date;
 }
