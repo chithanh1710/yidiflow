@@ -11,7 +11,6 @@ export function Search({
   placeholder: string;
   className?: string;
 }) {
-  const id = Math.random();
   return (
     <div
       className={cn(
@@ -19,7 +18,7 @@ export function Search({
         className
       )}
     >
-      <label htmlFor={"search" + route + placeholder + id}>
+      <label htmlFor={"search" + route + placeholder}>
         <Image
           alt="Search icon"
           src="assets/icons/search.svg"
@@ -31,7 +30,7 @@ export function Search({
         className="bg-transparent w-full outline-none"
         onChange={() => {}}
         type="text"
-        id={"search" + route + placeholder + id}
+        id={"search" + route + placeholder}
         placeholder={placeholder}
       />
     </div>
