@@ -14,8 +14,10 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { formQuestionSchema } from "@/lib/validations";
+import { useEffect, useState } from "react";
 
 export default function Question() {
+  const [tags, setTags] = useState<string[]>([]);
   const form = useForm<z.infer<typeof formQuestionSchema>>({
     resolver: zodResolver(formQuestionSchema),
     defaultValues: {
@@ -25,8 +27,13 @@ export default function Question() {
     },
   });
 
+  useEffect(() => {
+    form.setValue("tags", tags);
+  }, [tags, form]);
+
   function onSubmit(values: z.infer<typeof formQuestionSchema>) {
     console.log(values);
+    form.reset();
   }
 
   return (
@@ -67,7 +74,9 @@ export default function Question() {
                 Detailed explanation of your problem{" "}
                 <span className="text-primary-500">*</span>
               </FormLabel>
-              <FormControl className="mt-3.5">{/* TODO: */}</FormControl>
+              <FormControl className="mt-3.5">
+                <Input {...field} />
+              </FormControl>
               <FormDescription className="body-regular mt-2.5 text-light-500">
                 Introduce the problem and expand on what you put in the title.
                 Minimum 20 characters.
@@ -86,15 +95,32 @@ export default function Question() {
               </FormLabel>
               <FormControl className="mt-3.5">
                 <Input
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      if (tags.length < 3) {
+                        e.preventDefault();
+                        const value = e.currentTarget.value;
+                        setTags((prev) => [...prev, value]);
+                        e.currentTarget.value = "";
+                      }
+                    }
+                  }}
                   className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
                   placeholder="Add tags..."
-                  {...field}
                 />
               </FormControl>
-              <FormDescription className="body-regular mt-2.5 text-light-500">
-                Add up to 3 tags to describe what your question is about. You
-                need to press enter to add a tag
-              </FormDescription>
+              {tags.length > 0 ? (
+                <div className="flex gap-4">
+                  {tags.map((tag, i) => (
+                    <Button key={i}>{tag}</Button>
+                  ))}
+                </div>
+              ) : (
+                <FormDescription className="body-regular mt-2.5 text-light-500">
+                  Add up to 3 tags to describe what your question is about. You
+                  need to press enter to add a tag
+                </FormDescription>
+              )}
               <FormMessage className="text-red-500" />
             </FormItem>
           )}
