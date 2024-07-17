@@ -15,9 +15,12 @@ import {
 import { Input } from "../ui/input";
 import { formQuestionSchema } from "@/lib/validations";
 import { useEffect, useState } from "react";
+import { QuillEditor } from "./QuillEditor";
+import { X } from "lucide-react";
 
 export default function Question() {
   const [tags, setTags] = useState<string[]>([]);
+  const [text, setText] = useState<string>("");
   const form = useForm<z.infer<typeof formQuestionSchema>>({
     resolver: zodResolver(formQuestionSchema),
     defaultValues: {
@@ -29,11 +32,14 @@ export default function Question() {
 
   useEffect(() => {
     form.setValue("tags", tags);
-  }, [tags, form]);
+    form.setValue("explanation", text);
+  }, [tags, form, text]);
 
   function onSubmit(values: z.infer<typeof formQuestionSchema>) {
     console.log(values);
     form.reset();
+    setTags([]);
+    setText("");
   }
 
   return (
@@ -75,13 +81,15 @@ export default function Question() {
                 <span className="text-primary-500">*</span>
               </FormLabel>
               <FormControl className="mt-3.5">
-                <Input {...field} />
+                <QuillEditor setValue={setText} value={text} />
               </FormControl>
               <FormDescription className="body-regular mt-2.5 text-light-500">
                 Introduce the problem and expand on what you put in the title.
                 Minimum 20 characters.
               </FormDescription>
-              <FormMessage className="text-red-500" />
+              {field.value.length < 20 && (
+                <FormMessage className="text-red-500" />
+              )}
             </FormItem>
           )}
         />
@@ -110,18 +118,37 @@ export default function Question() {
                 />
               </FormControl>
               {tags.length > 0 ? (
-                <div className="flex gap-4">
+                <div className="flex gap-4 !mt-6">
                   {tags.map((tag, i) => (
-                    <Button key={i}>{tag}</Button>
+                    <div
+                      className="px-4 py-1 bg-primary-500 flex items-center gap-2 rounded-md text-light-900"
+                      key={i}
+                    >
+                      {tag}
+                      <Button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setTags((prev) =>
+                            prev.filter((_, index) => index !== i)
+                          );
+                        }}
+                        variant="ghost"
+                        className="px-2 py-0.5"
+                      >
+                        <X />
+                      </Button>
+                    </div>
                   ))}
                 </div>
               ) : (
-                <FormDescription className="body-regular mt-2.5 text-light-500">
-                  Add up to 3 tags to describe what your question is about. You
-                  need to press enter to add a tag
-                </FormDescription>
+                <>
+                  <FormDescription className="body-regular mt-2.5 text-light-500">
+                    Add up to 3 tags to describe what your question is about.
+                    You need to press enter to add a tag
+                  </FormDescription>
+                  <FormMessage className="text-red-500" />
+                </>
               )}
-              <FormMessage className="text-red-500" />
             </FormItem>
           )}
         />
