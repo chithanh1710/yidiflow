@@ -1,11 +1,20 @@
+import { UseFormReturn } from "react-hook-form";
 import ReactQuill from "react-quill";
 
 export const QuillEditor = ({
   value,
-  setValue,
+  form,
 }: {
   value: string;
-  setValue: React.Dispatch<React.SetStateAction<string>>;
+  form: UseFormReturn<
+    {
+      title: string;
+      explanation: string;
+      tags: string[];
+    },
+    any,
+    undefined
+  >;
 }) => {
   const modules = {
     toolbar: [
@@ -44,7 +53,19 @@ export const QuillEditor = ({
       <ReactQuill
         className="rounded-md background-light900_dark300 text-dark400_light800"
         value={value}
-        onChange={setValue}
+        onChange={(value) => {
+          form.setValue("explanation", value);
+        }}
+        onBlur={(e) => {
+          if (e && e?.index < 20) {
+            form.setError("explanation", {
+              type: "required",
+              message: "String must contain at least 20 character(s)",
+            });
+          } else {
+            form.clearErrors("explanation");
+          }
+        }}
         modules={modules}
         formats={formats}
       />
