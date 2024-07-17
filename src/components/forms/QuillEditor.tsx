@@ -1,6 +1,4 @@
 import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
-import "./StyleQuillEditor.css";
 
 export const QuillEditor = ({
   value,
@@ -44,6 +42,7 @@ export const QuillEditor = ({
   return (
     <div>
       <ReactQuill
+        className="rounded-md background-light900_dark300 text-dark400_light800"
         value={value}
         onChange={setValue}
         modules={modules}
