@@ -1,6 +1,6 @@
 import Question from "@/components/forms/Question";
 
-export default function page() {
+export default async function page() {
   return (
     <div>
       <h1 className="h1-bold text-dark100_light900">Ask a Question</h1>

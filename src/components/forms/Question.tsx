@@ -17,22 +17,27 @@ import { formQuestionSchema } from "@/lib/validations";
 import { KeyboardEvent, useCallback, useState } from "react";
 import { QuillEditor } from "./QuillEditor";
 import { X } from "lucide-react";
+import { createQuestion } from "@/lib/actions/question.action";
 
 export default function Question() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm<z.infer<typeof formQuestionSchema>>({
     resolver: zodResolver(formQuestionSchema),
     defaultValues: {
-      title: "",
-      explanation: "",
-      tags: [],
+      title: "123456",
+      explanation: "123416551413851351351",
+      tags: ["123", "456"],
     },
   });
 
-  function onSubmit(values: z.infer<typeof formQuestionSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formQuestionSchema>) {
     setIsSubmitting(true);
     form.reset();
+
+    try {
+      await createQuestion(values);
+      setIsSubmitting(false);
+    } catch (error) {}
   }
 
   const handleKeyDown = useCallback(
