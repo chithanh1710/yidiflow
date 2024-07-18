@@ -3,11 +3,12 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import Theme from "./Theme";
+import { Search } from "./Search";
 
 export default function Navbar() {
   return (
     <div className="flex-between background-light900_dark200 fixed z-50 w-full gap-5 p-6 shadow-light-300 dark:shadow-none sm:px-12">
-      <Link href="/" className="flex items-center gap-1">
+      <Link href="/" className="flex flex-shrink-0 items-center gap-1">
         <Image
           width={23}
           height={23}
@@ -18,8 +19,12 @@ export default function Navbar() {
           YiDi <span className="text-primary-500">OverFlow</span>
         </p>
       </Link>
-      GlobalSearch
-      <div className="flex items-center gap-4 text-dark-100 dark:text-light-900">
+      <Search
+        route="/"
+        className="max-w-xl max-lg:hidden"
+        placeholder="Search anything globally..."
+      />
+      <div className="flex flex-shrink-0 items-center gap-4 text-dark-100 dark:text-light-900">
         <Theme />
         <SignedIn>
           <UserButton
