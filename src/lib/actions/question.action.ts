@@ -3,26 +3,86 @@
 import { z } from "zod";
 import { connectToDatabase } from "../mongoose";
 import { formQuestionSchema } from "../validations";
-import { currentUser } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
+import Question, { IQuestion } from "@/database/question.model";
+import Tag, { ITag } from "@/database/tag.model";
+import { getUserById } from "./user.action";
+import User, { IUser } from "@/database/user.model";
+import { Types } from "mongoose";
+import { revalidatePath } from "next/cache";
 
-export async function createQuestion({
-  explanation,
-  tags,
-  title,
-}: z.infer<typeof formQuestionSchema>) {
+export async function createQuestion(
+  params: z.infer<typeof formQuestionSchema>
+) {
   try {
     await connectToDatabase();
-    const user = await currentUser();
-    const newQuestion = {
-      actor_name: user?.fullName,
-      email: user?.emailAddresses,
-      explanation,
-      tags,
+    const { userId } = auth();
+    const mongoUser = await getUserById({ userId });
+    const { explanation: content, tags, title } = params;
+    const question = await Question.create({
       title,
-      createDate: new Date().toISOString(),
-    };
-    console.log(user?.fullName);
+      content,
+      author: mongoUser?._id,
+    });
+    const tagDocuments = [];
+
+    for (const tag of tags) {
+      const existingTag = await Tag.findOneAndUpdate(
+        {
+          name: { $regex: new RegExp(`^${tag}$`, "i") },
+        },
+        {
+          $setOnInsert: { name: tag },
+          $push: { question: question._id },
+        },
+        { upsert: true, new: true }
+      );
+      tagDocuments.push(existingTag._id);
+    }
+
+    await Question.findByIdAndUpdate(question._id, {
+      $push: { tags: { $each: tagDocuments } },
+    });
+
+    revalidatePath("/", "page");
   } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function getQuestion(): Promise<IQuestion[]> {
+  try {
+    await connectToDatabase();
+    const questions = await Question.find();
+    return questions;
+  } catch (error) {
+    console.error("Get question error", error);
+    throw error;
+  }
+}
+
+export async function getAuthorById(id: string): Promise<IUser> {
+  try {
+    await connectToDatabase();
+    console.log(id);
+    const user = await User.findById(id);
+    if (!user) throw new Error(id);
+    return user;
+  } catch (error) {
+    console.error("Get question error", error);
+    throw error;
+  }
+}
+
+export async function getTag(id: string): Promise<ITag> {
+  try {
+    await connectToDatabase();
+    const tag = await Tag.findById(id);
+    if (!tag) throw new Error("Not found tag");
+    return tag;
+  } catch (error) {
+    console.error("Get question error", error);
     throw error;
   }
 }

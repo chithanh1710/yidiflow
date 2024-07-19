@@ -4,49 +4,11 @@ import { HomePageFilters } from "@/constants/filters";
 import { QuestionCard } from "@/components/cards/QuestionCard";
 import NoResult from "@/components/shared/NoResult";
 import ButtonAskQuestion from "@/components/shared/ButtonAskQuestion";
+import { getQuestion } from "@/lib/actions/question.action";
+import { getIdToString } from "@/lib/utils";
 
-const questions = [
-  {
-    _id: "1",
-    title: "Cascading Deletes in SQLAlchemy?",
-    tags: [
-      {
-        _id: "1",
-        name: "python",
-      },
-      {
-        _id: "2",
-        name: "sql",
-      },
-    ],
-    author: { _id: "1", picture: "", name: "John Doe" },
-    upVotes: 9612312312,
-    answers: [],
-    views: 61534,
-    createAt: new Date("2024-07-02T12:00:00.000Z"),
-  },
-  {
-    _id: "2",
-    title: "How do I use express as a custom in NextJS?",
-    tags: [
-      {
-        _id: "1",
-        name: "nextjs",
-      },
-      {
-        _id: "2",
-        name: "sql",
-      },
-    ],
-    author: { _id: "1", picture: "", name: "Chi Thanh" },
-    upVotes: 54135,
-    answers: [],
-    views: 1531231,
-    createAt: new Date("2022-09-01T12:00:00.000Z"),
-  },
-];
-
-export default function page() {
+export default async function page() {
+  const questions = await getQuestion();
   return (
     <>
       <div className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
@@ -60,7 +22,10 @@ export default function page() {
       <div className="mt-12 flex flex-col gap-6">
         {questions.length > 0 ? (
           questions.map((question) => (
-            <QuestionCard key={question._id} question={question} />
+            <QuestionCard
+              key={getIdToString(question._id)}
+              question={question}
+            />
           ))
         ) : (
           <NoResult

@@ -18,9 +18,12 @@ import { KeyboardEvent, useCallback, useState } from "react";
 import { QuillEditor } from "./QuillEditor";
 import { X } from "lucide-react";
 import { createQuestion } from "@/lib/actions/question.action";
+import { useRouter } from "next/navigation";
 
 export default function Question() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof formQuestionSchema>>({
     resolver: zodResolver(formQuestionSchema),
     defaultValues: {
@@ -36,8 +39,13 @@ export default function Question() {
 
     try {
       await createQuestion(values);
+      router.push("/");
+    } catch (error) {
+      console.error(error);
+      throw error;
+    } finally {
       setIsSubmitting(false);
-    } catch (error) {}
+    }
   }
 
   const handleKeyDown = useCallback(

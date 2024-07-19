@@ -1,4 +1,5 @@
 import { type ClassValue, clsx } from "clsx";
+import { Types } from "mongoose";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -16,3 +17,10 @@ export const formatAndDivideNumber = (num: number): string => {
     return num.toString();
   }
 };
+
+export function getIdToString(id: unknown): string {
+  if (id instanceof Types.ObjectId) {
+    return id.toString();
+  }
+  throw new Error("Invalid ID");
+}

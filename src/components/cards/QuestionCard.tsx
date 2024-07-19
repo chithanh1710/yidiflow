@@ -1,15 +1,16 @@
 import Image from "next/image";
-import { IQuestionType } from "@/interfaces/IQuestionType";
 import { Dot } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { TagQuestion } from "../shared/TagQuestion";
 import Link from "next/link";
-import { formatAndDivideNumber } from "@/lib/utils";
+import { formatAndDivideNumber, getIdToString } from "@/lib/utils";
+import { IQuestion } from "@/database/question.model";
+import { getAuthorById } from "@/lib/actions/question.action";
 
-export function QuestionCard({ question }: { question: IQuestionType }) {
-  const { _id, answers, author, createAt, tags, title, upVotes, views } =
+export async function QuestionCard({ question }: { question: IQuestion }) {
+  const { answers, author, createAt, tags, title, upVotes, views, _id } =
     question;
-
+  const { picture, name } = await getAuthorById(getIdToString(author));
   return (
     <div className="card-wrapper rounded-xl p-9 sm:px-11 text-dark100_light900">
       <span className="sm:hidden text-xs capitalize">
@@ -18,22 +19,22 @@ export function QuestionCard({ question }: { question: IQuestionType }) {
       <h3 className="h3-bold text-dark100_light900 line-clamp-1">{title}</h3>
       <div className="my-6 flex gap-2 flex-wrap">
         {tags.map((tag) => (
-          <TagQuestion tag={tag} key={tag._id} />
+          <TagQuestion _id={getIdToString(tag)} key={getIdToString(tag)} />
         ))}
       </div>
       <div className="flex justify-between flex-wrap items-center gap-6">
         <MetricContent
-          img={author.picture}
+          img={picture}
           alt="Image user"
           createAt={createAt}
-          author={author}
+          author={{ _id: getIdToString(_id), name, picture }}
         />
         <div className="flex flex-wrap gap-4 text-dark100_light900 text-xs">
           <MetricContent
             alt="Up vote icon"
             img="/assets/icons/like.svg"
             title="Votes"
-            value={upVotes}
+            value={upVotes.length}
           />
           <MetricContent
             alt="Message icon"
@@ -70,7 +71,7 @@ function MetricContent({
 }) {
   return author && createAt ? (
     <Link className="flex gap-2" href={`/profile/${author._id}`}>
-      <Image
+      <img
         alt={alt}
         src={img}
         width={24}
@@ -86,13 +87,11 @@ function MetricContent({
       </p>
     </Link>
   ) : (
-    value && (
-      <div className="flex gap-1">
-        <Image alt={alt} src={img} width={16} height={16} />
-        <p>
-          <span>{formatAndDivideNumber(value)}</span> {title}
-        </p>
-      </div>
-    )
+    <div className="flex gap-1">
+      <Image alt={alt} src={img} width={16} height={16} />
+      <p>
+        <span>{formatAndDivideNumber(value || 0)}</span> {title}
+      </p>
+    </div>
   );
 }
