@@ -27,9 +27,9 @@ export default function Question() {
   const form = useForm<z.infer<typeof formQuestionSchema>>({
     resolver: zodResolver(formQuestionSchema),
     defaultValues: {
-      title: "123456",
-      explanation: "123416551413851351351",
-      tags: ["123", "456"],
+      title: "",
+      explanation: "",
+      tags: [],
     },
   });
 

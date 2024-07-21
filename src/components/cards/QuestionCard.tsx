@@ -4,22 +4,32 @@ import { formatDistanceToNow } from "date-fns";
 import { TagQuestion } from "../shared/TagQuestion";
 import Link from "next/link";
 import { formatAndDivideNumber, getIdToString } from "@/lib/utils";
-import { IQuestion } from "@/database/question.model";
 import { getAuthorById } from "@/lib/actions/question.action";
+import { QuestionFullParams } from "@/lib/actions/shared.types";
 
-export async function QuestionCard({ question }: { question: IQuestion }) {
+export async function QuestionCard({
+  question,
+}: {
+  question: QuestionFullParams;
+}) {
   const { answers, author, createAt, tags, title, upVotes, views, _id } =
     question;
-  const { picture, name } = await getAuthorById(getIdToString(author));
+  const tagsFormat = Array.from(new Set(tags));
+  const { picture, name } = await getAuthorById(getIdToString(author._id));
   return (
     <div className="card-wrapper rounded-xl p-9 sm:px-11 text-dark100_light900">
       <span className="sm:hidden text-xs capitalize">
         {formatDistanceToNow(createAt, { addSuffix: true })}
       </span>
-      <h3 className="h3-bold text-dark100_light900 line-clamp-1">{title}</h3>
+      <h3 className="h3-bold text-dark100_light900 line-clamp-1">
+        <Link href={`/ask-question/${_id}`}>{title}</Link>
+      </h3>
       <div className="my-6 flex gap-2 flex-wrap">
-        {tags.map((tag) => (
-          <TagQuestion _id={getIdToString(tag)} key={getIdToString(tag)} />
+        {tagsFormat.map((tag) => (
+          <TagQuestion
+            _id={getIdToString(tag._id)}
+            key={getIdToString(tag._id)}
+          />
         ))}
       </div>
       <div className="flex justify-between flex-wrap items-center gap-6">
@@ -27,7 +37,7 @@ export async function QuestionCard({ question }: { question: IQuestion }) {
           img={picture}
           alt="Image user"
           createAt={createAt}
-          author={{ _id: getIdToString(_id), name, picture }}
+          author={{ _id: getIdToString(author._id), name, picture }}
         />
         <div className="flex flex-wrap gap-4 text-dark100_light900 text-xs">
           <MetricContent

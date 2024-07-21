@@ -8,8 +8,10 @@ import Question, { IQuestion } from "@/database/question.model";
 import Tag, { ITag } from "@/database/tag.model";
 import { getUserById } from "./user.action";
 import User, { IUser } from "@/database/user.model";
-import { Types } from "mongoose";
 import { revalidatePath } from "next/cache";
+import { GetQuestionsParams, QuestionFullParams } from "./shared.types";
+import page from "@/app/(root)/(home)/page";
+import { PAGE_SIZE } from "@/constants";
 
 export async function createQuestion(
   params: z.infer<typeof formQuestionSchema>
@@ -51,10 +53,23 @@ export async function createQuestion(
   }
 }
 
-export async function getQuestion(): Promise<IQuestion[]> {
+export async function getQuestions(
+  params: GetQuestionsParams
+): Promise<QuestionFullParams[]> {
+  const { page = 1, pageSize = PAGE_SIZE } = params;
+  const skip = (page - 1) * pageSize;
   try {
     await connectToDatabase();
-    const questions = await Question.find();
+    const questions: QuestionFullParams[] = await Question.find({})
+      .skip(skip)
+      .limit(pageSize)
+      .populate({
+        path: "tags",
+        model: Tag,
+      })
+      .populate({ path: "author", model: User })
+      .sort({ createAt: -1 })
+      .lean();
     return questions;
   } catch (error) {
     console.error("Get question error", error);

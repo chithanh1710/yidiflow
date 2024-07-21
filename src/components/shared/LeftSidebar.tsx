@@ -44,7 +44,7 @@ const DataLeftSidebar: DataLeftSidebarType[] = [
   },
   {
     icon: "assets/icons/question.svg",
-    href: "/ask-a-question",
+    href: "/ask-question",
     label: "Ask a Question",
   },
 ];
