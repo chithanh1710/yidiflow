@@ -1,4 +1,4 @@
-import { Document, model, models, Schema } from "mongoose";
+import mongoose, { Document, model, models, Schema } from "mongoose";
 
 export interface IUser extends Document {
   clerkId: string;
@@ -30,6 +30,14 @@ const UserSchema = new Schema<IUser>({
   joinedAt: { type: Date, required: true, default: Date.now },
 });
 
-const User = models.User || model<IUser>("User", UserSchema);
+const User = (models.User ||
+  model<IUser>("User", UserSchema)) as mongoose.Model<
+  IUser,
+  {},
+  {},
+  {},
+  mongoose.Document<unknown, {}, IUser> & IUser & Required<{ _id: unknown }>,
+  any
+>;
 
 export default User;
