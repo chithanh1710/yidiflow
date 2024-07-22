@@ -63,7 +63,7 @@ export async function POST(req: Request) {
       email: email_addresses[0].email_address,
       name: `${first_name}${last_name ? " " + last_name : ""}`,
       picture: image_url,
-      username: username!,
+      username: username || "User name",
     });
 
     return NextResponse.json({
@@ -83,7 +83,7 @@ export async function POST(req: Request) {
         email: email_addresses[0].email_address,
         name: `${first_name}${last_name ? " " + last_name : ""}`,
         picture: image_url,
-        username: username!,
+        username: username || "User name",
       },
       path: `/profile/${id}`,
     });
