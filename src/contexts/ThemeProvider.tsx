@@ -12,7 +12,7 @@ import { IThemeContextType } from "../interfaces/IThemeContextType";
 const ThemeContext = createContext<IThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [mode, setMode] = useState("light");
+  const [mode, setMode] = useState("dark");
 
   useEffect(() => {
     const userPrefersDark =

@@ -35,14 +35,12 @@ export async function getAllUser(params: GetAllUsersParams) {
     const allUser = await User.find(query)
       .skip(skip)
       .limit(pageSize)
+      .sort({ joinedAt: -1 })
       .populate({
         path: "saved",
         model: Question,
-        populate: {
-          path: "tags",
-          model: "Tag",
-        },
       });
+
     return allUser;
   } catch (error) {
     console.error(error);

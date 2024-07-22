@@ -84,7 +84,6 @@ export async function getQuestions(
 export async function getAuthorById(id: string): Promise<IUser> {
   try {
     await connectToDatabase();
-    console.log(id);
     const user = await User.findById(id);
     if (!user) throw new Error(id);
     return user;
