@@ -11,7 +11,6 @@ import User, { IUser } from "@/database/user.model";
 import { revalidatePath } from "next/cache";
 import { GetQuestionsParams, QuestionFullParams } from "./shared.types";
 import { PAGE_SIZE } from "@/constants";
-import { Types } from "mongoose";
 
 export async function createQuestion(
   params: z.infer<typeof formQuestionSchema>
@@ -20,12 +19,12 @@ export async function createQuestion(
     await connectToDatabase();
     const { userId } = auth();
     const mongoUser = await getUserById({ userId });
-    // if (!mongoUser?._id) throw new Error("Not found user");
+    if (!mongoUser?._id) throw new Error("Not found user");
     const { explanation: content, tags, title } = params;
     const question = await Question.create({
       title,
       content,
-      author: mongoUser?._id || new Types.ObjectId("669dbaae9a974f0a3694b31a"),
+      author: mongoUser._id,
     });
     const tagDocuments = [];
 
@@ -45,6 +44,10 @@ export async function createQuestion(
 
     await Question.findByIdAndUpdate(question._id, {
       $push: { tags: { $each: tagDocuments } },
+    });
+
+    await User.findOneAndUpdate(mongoUser._id, {
+      $addToSet: { saved: question._id },
     });
 
     revalidatePath("/", "page");
@@ -81,7 +84,6 @@ export async function getQuestions(
 export async function getAuthorById(id: string): Promise<IUser> {
   try {
     await connectToDatabase();
-    console.log(id);
     const user = await User.findById(id);
     if (!user) throw new Error(id);
     return user;

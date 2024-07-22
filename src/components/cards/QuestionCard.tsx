@@ -81,7 +81,7 @@ function MetricContent({
 }) {
   return author && createAt ? (
     <Link className="flex gap-2" href={`/profile/${author._id}`}>
-      <img
+      <Image
         alt={alt}
         src={img}
         width={24}

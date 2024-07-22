@@ -20,7 +20,7 @@ export default function Navbar() {
         </p>
       </Link>
       <Search
-        route="/"
+        route="global"
         className="max-w-xl max-lg:hidden"
         placeholder="Search anything globally..."
       />
