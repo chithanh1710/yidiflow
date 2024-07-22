@@ -6,10 +6,10 @@ import NoResult from "@/components/shared/NoResult";
 import ButtonAskQuestion from "@/components/shared/ButtonAskQuestion";
 import { getQuestions } from "@/lib/actions/question.action";
 import { getIdToString } from "@/lib/utils";
-import console from "console";
 
 export default async function page() {
   const questions = await getQuestions({ page: 1, pageSize: 10 });
+  console.log(questions);
   return (
     <>
       <div className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
