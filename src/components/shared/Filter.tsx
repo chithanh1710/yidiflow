@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/select";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-export function HomeFilter({
+export function Filter({
   dataList,
 }: {
   dataList: { value: string; name: string }[];

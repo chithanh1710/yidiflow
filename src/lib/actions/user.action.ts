@@ -5,11 +5,50 @@ import { connectToDatabase } from "../mongoose";
 import {
   CreateUserParams,
   DeleteUserParams,
+  GetAllUsersParams,
   UpdateUserParams,
 } from "./shared.types";
 import { revalidatePath } from "next/cache";
 import Question from "@/database/question.model";
+import { PAGE_SIZE } from "@/constants";
 import Tag from "@/database/tag.model";
+
+export async function getAllUser(params: GetAllUsersParams) {
+  try {
+    await connectToDatabase();
+    const { filter, page = 1, pageSize = PAGE_SIZE, searchQuery } = params;
+    const skip = (page - 1) * pageSize;
+    let query: any = {};
+
+    if (searchQuery) {
+      query.$text = { $search: searchQuery };
+    }
+
+    if (filter === "newUser") {
+      query.joinedAt = { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) };
+    } else if (filter === "oldUser") {
+      query.joinedAt = { $lt: new Date(Date.now() - 24 * 60 * 60 * 1000) };
+    } else if (filter === "topContributors") {
+      query.reputation = { $gt: 0 };
+    }
+
+    const allUser = await User.find(query)
+      .skip(skip)
+      .limit(pageSize)
+      .populate({
+        path: "saved",
+        model: Question,
+        populate: {
+          path: "tags",
+          model: "Tag",
+        },
+      });
+    return allUser;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
 
 export async function getUserById(params: any) {
   try {

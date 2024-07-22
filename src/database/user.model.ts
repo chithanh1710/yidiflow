@@ -30,6 +30,8 @@ const UserSchema = new Schema<IUser>({
   joinedAt: { type: Date, required: true, default: Date.now },
 });
 
+UserSchema.index({ name: "text", username: "text", email: "text" });
+
 const User = (models.User ||
   model<IUser>("User", UserSchema)) as mongoose.Model<
   IUser,

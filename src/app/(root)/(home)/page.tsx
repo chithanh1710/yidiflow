@@ -1,5 +1,5 @@
 import { Search } from "@/components/shared/Search";
-import { HomeFilter } from "@/components/shared/HomeFilter";
+import { Filter } from "@/components/shared/Filter";
 import { HomePageFilters } from "@/constants/filters";
 import { QuestionCard } from "@/components/cards/QuestionCard";
 import NoResult from "@/components/shared/NoResult";
@@ -16,8 +16,8 @@ export default async function page() {
         <ButtonAskQuestion link="/ask-question" linkTitle="Ask a Question" />
       </div>
       <div className="mt-10 flex justify-between gap-5 lg:flex-col lg:items-start max-sm:flex-col sm:items-center">
-        <Search route="/ask-questions" placeholder="Search questions..." />
-        <HomeFilter dataList={HomePageFilters} />
+        <Search route="q" placeholder="Search questions..." />
+        <Filter dataList={HomePageFilters} />
       </div>
       <div className="mt-12 flex flex-col gap-6">
         {questions.length > 0 ? (
