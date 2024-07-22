@@ -9,7 +9,6 @@ import { getIdToString } from "@/lib/utils";
 
 export default async function page() {
   const questions = await getQuestions({ page: 1, pageSize: 10 });
-  console.log(questions);
   return (
     <>
       <div className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
