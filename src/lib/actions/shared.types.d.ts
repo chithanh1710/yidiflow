@@ -164,7 +164,7 @@ interface Author {
   _id: Schema.Types.ObjectId;
   clerkId: string;
   name: string;
-  userName: string;
+  username: string;
   email: string;
   password: string;
   bio: string;
