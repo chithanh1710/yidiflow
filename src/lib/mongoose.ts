@@ -14,7 +14,7 @@ export const connectToDatabase = async () => {
   }
 
   try {
-    await mongoose.connect(process.env.MONGODB_URL, { dbName: "YiDiFlow" });
+    await mongoose.connect(process.env.MONGODB_URL, { dbName: "yidiflow" });
     isConnected = true;
     console.log("MongoDB is connected!");
   } catch (error) {

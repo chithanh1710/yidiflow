@@ -10,7 +10,6 @@ import { getUserById } from "./user.action";
 import User, { IUser } from "@/database/user.model";
 import { revalidatePath } from "next/cache";
 import { GetQuestionsParams, QuestionFullParams } from "./shared.types";
-import page from "@/app/(root)/(home)/page";
 import { PAGE_SIZE } from "@/constants";
 
 export async function createQuestion(
@@ -20,11 +19,12 @@ export async function createQuestion(
     await connectToDatabase();
     const { userId } = auth();
     const mongoUser = await getUserById({ userId });
+    if (!mongoUser?._id) throw new Error("Not found user");
     const { explanation: content, tags, title } = params;
     const question = await Question.create({
       title,
       content,
-      author: mongoUser?._id,
+      author: mongoUser._id,
     });
     const tagDocuments = [];
 
