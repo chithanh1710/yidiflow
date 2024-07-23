@@ -4,10 +4,12 @@ import Link from "next/link";
 import React from "react";
 import Theme from "./Theme";
 import { Search } from "./Search";
+import { Menu } from "lucide-react";
+import { ToggleMenu } from "./ToggleMenu";
 
 export default function Navbar() {
   return (
-    <div className="flex-between background-light900_dark200 fixed z-50 w-full gap-5 p-6 shadow-light-300 dark:shadow-none sm:px-12">
+    <div className="flex-between background-light900_dark200 fixed z-[9999] w-full gap-5 p-6 shadow-light-300 dark:shadow-none sm:px-12">
       <Link href="/" className="flex flex-shrink-0 items-center gap-1">
         <Image
           width={23}
@@ -30,7 +32,7 @@ export default function Navbar() {
           <UserButton
             appearance={{
               elements: {
-                avatarBox: "h-10 w-10",
+                avatarBox: "h-6 w-6",
               },
               variables: {
                 colorPrimary: "#ff7000",
@@ -41,6 +43,7 @@ export default function Navbar() {
         <SignedOut>
           <SignInButton />
         </SignedOut>
+        <ToggleMenu />
       </div>
     </div>
   );

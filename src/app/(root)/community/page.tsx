@@ -5,7 +5,6 @@ import { getAllUser } from "@/lib/actions/user.action";
 import { SearchParamsProps } from "@/types";
 import Link from "next/link";
 import { UserCard } from "../../../components/cards/UserCard";
-import { Suspense } from "react";
 
 export default async function page({ searchParams }: SearchParamsProps) {
   const allUser: any = await getAllUser({ searchQuery: searchParams.q });
