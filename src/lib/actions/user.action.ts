@@ -1,6 +1,6 @@
 "use server";
 
-import User from "@/database/user.model";
+import User, { IUser } from "@/database/user.model";
 import { connectToDatabase } from "../mongoose";
 import {
   CreateUserParams,
@@ -11,7 +11,6 @@ import {
 import { revalidatePath } from "next/cache";
 import Question from "@/database/question.model";
 import { PAGE_SIZE } from "@/constants";
-import Tag from "@/database/tag.model";
 
 export async function getAllUser(params: GetAllUsersParams) {
   try {
@@ -44,6 +43,18 @@ export async function getAllUser(params: GetAllUsersParams) {
     return allUser;
   } catch (error) {
     console.error(error);
+    throw error;
+  }
+}
+
+export async function getAuthorById(id: string): Promise<IUser> {
+  try {
+    await connectToDatabase();
+    const user = await User.findById(id);
+    if (!user) throw new Error(id);
+    return user;
+  } catch (error) {
+    console.error("Get question error", error);
     throw error;
   }
 }

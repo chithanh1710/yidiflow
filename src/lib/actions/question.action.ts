@@ -11,6 +11,7 @@ import User, { IUser } from "@/database/user.model";
 import { revalidatePath } from "next/cache";
 import { GetQuestionsParams, QuestionFullParams } from "./shared.types";
 import { PAGE_SIZE } from "@/constants";
+import { error } from "console";
 
 export async function createQuestion(
   params: z.infer<typeof formQuestionSchema>
@@ -35,7 +36,7 @@ export async function createQuestion(
         },
         {
           $setOnInsert: { name: tag },
-          $push: { question: question._id },
+          $push: { questions: question._id },
         },
         { upsert: true, new: true }
       );
@@ -60,11 +61,37 @@ export async function createQuestion(
 export async function getQuestions(
   params: GetQuestionsParams
 ): Promise<QuestionFullParams[]> {
-  const { page = 1, pageSize = PAGE_SIZE } = params;
+  const {
+    page = 1,
+    pageSize = PAGE_SIZE,
+    filter = "",
+    searchQuery = "",
+  } = params;
   const skip = (page - 1) * pageSize;
   try {
     await connectToDatabase();
-    const questions: QuestionFullParams[] = await Question.find({})
+    let optionFilter = {};
+    let queryConditions: any = {
+      title: { $regex: searchQuery, $options: "i" },
+    };
+    switch (filter) {
+      case "newest":
+        optionFilter = { createdAt: -1 };
+        break;
+      case "recommended":
+        optionFilter = { views: -1 };
+        break;
+      case "frequent":
+        optionFilter = { answers: -1 };
+        break;
+      case "unanswered":
+        optionFilter = { createdAt: -1 };
+        queryConditions.answers = { $size: 0 };
+        break;
+      default:
+        optionFilter = { createdAt: -1 };
+    }
+    const questions: QuestionFullParams[] = await Question.find(queryConditions)
       .skip(skip)
       .limit(pageSize)
       .populate({
@@ -72,33 +99,9 @@ export async function getQuestions(
         model: Tag,
       })
       .populate({ path: "author", model: User })
-      .sort({ createAt: -1 })
+      .sort(optionFilter)
       .lean();
     return questions;
-  } catch (error) {
-    console.error("Get question error", error);
-    throw error;
-  }
-}
-
-export async function getAuthorById(id: string): Promise<IUser> {
-  try {
-    await connectToDatabase();
-    const user = await User.findById(id);
-    if (!user) throw new Error(id);
-    return user;
-  } catch (error) {
-    console.error("Get question error", error);
-    throw error;
-  }
-}
-
-export async function getTag(id: string): Promise<ITag> {
-  try {
-    await connectToDatabase();
-    const tag = await Tag.findById(id);
-    if (!tag) throw new Error("Not found tag");
-    return tag;
   } catch (error) {
     console.error("Get question error", error);
     throw error;
