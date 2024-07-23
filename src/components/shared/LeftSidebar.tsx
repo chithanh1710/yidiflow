@@ -81,7 +81,9 @@ export default function LeftSidebar() {
                 height={26}
                 className={`${pathname === item.href ? "" : "invert-colors"}`}
               />
-              <p className="max-md:hidden max-sm:block">{item.label}</p>
+              <p className={`max-md:hidden ${isOpenMenu && "max-sm:block"}`}>
+                {item.label}
+              </p>
             </Link>
           ))}
         </div>
@@ -98,7 +100,11 @@ export default function LeftSidebar() {
                     className="invert-colors"
                   />
                 </span>
-                <span className="max-md:hidden max-sm:block">Log In</span>
+                <span
+                  className={`max-md:hidden ${isOpenMenu && "max-sm:block"}`}
+                >
+                  Log In
+                </span>
               </Button>
             </Link>
             <Link href="/sign-up">
