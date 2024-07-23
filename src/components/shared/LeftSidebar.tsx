@@ -66,7 +66,7 @@ export default function LeftSidebar() {
               href={item.href}
             >
               <Image
-                alt={`${item.label + item.icon}`}
+                alt={`${item.label} icon`}
                 src={item.icon}
                 width={26}
                 height={26}

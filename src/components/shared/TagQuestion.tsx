@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { getTag } from "@/lib/actions/question.action";
+import { getTag } from "@/lib/actions/tag.action";
 
 export async function TagQuestion({ _id }: { _id: string }) {
   const { name } = await getTag(_id);

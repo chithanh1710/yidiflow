@@ -4,7 +4,7 @@ import { formatDistanceToNow } from "date-fns";
 import { TagQuestion } from "../shared/TagQuestion";
 import Link from "next/link";
 import { formatAndDivideNumber, getIdToString } from "@/lib/utils";
-import { getAuthorById } from "@/lib/actions/question.action";
+import { getAuthorById } from "@/lib/actions/user.action";
 import { QuestionFullParams } from "@/lib/actions/shared.types";
 
 export async function QuestionCard({

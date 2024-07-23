@@ -4,10 +4,7 @@ import Image from "next/image";
 
 export function UserCard({ user }: { user: any }) {
   return (
-    <article
-      key={user.clerkId}
-      className="background-light900_dark200 light-border flex w-full flex-col gap-3 items-center justify-center rounded-2xl border p-8"
-    >
+    <article className="background-light900_dark200 light-border flex w-full h-full flex-col gap-3 items-center justify-center rounded-2xl border p-8">
       <Image
         className="rounded-full object-cover bg-yellow-200"
         alt={`Image ${user.name}`}
