@@ -19,3 +19,7 @@
 .ql-picker:is(.dark *) {
   color: white;
 }
+
+.ql-picker-options {
+  color: black;
+}
