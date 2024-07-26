@@ -14,37 +14,37 @@ interface DataLeftSidebarType {
 
 const DataLeftSidebar: DataLeftSidebarType[] = [
   {
-    icon: "assets/icons/home.svg",
+    icon: "/assets/icons/home.svg",
     href: "/",
     label: "Home",
   },
   {
-    icon: "assets/icons/users.svg",
+    icon: "/assets/icons/users.svg",
     href: "/community",
     label: "Community",
   },
   {
-    icon: "assets/icons/star.svg",
+    icon: "/assets/icons/star.svg",
     href: "/collections",
     label: "Collections",
   },
   {
-    icon: "assets/icons/suitcase.svg",
+    icon: "/assets/icons/suitcase.svg",
     href: "/find-jobs",
     label: "Find Jobs",
   },
   {
-    icon: "assets/icons/tag.svg",
+    icon: "/assets/icons/tag.svg",
     href: "/tags",
     label: "Tags",
   },
   {
-    icon: "assets/icons/user.svg",
+    icon: "/assets/icons/user.svg",
     href: "/communities",
     label: "Communities",
   },
   {
-    icon: "assets/icons/question.svg",
+    icon: "/assets/icons/question.svg",
     href: "/ask-question",
     label: "Ask a Question",
   },

@@ -1,16 +1,27 @@
 import { UseFormReturn } from "react-hook-form";
 import ReactQuill from "react-quill";
+import BounceLoading from "../loading/BounceLoading";
 
 export const QuillEditor = ({
   value,
   form,
+  formAnswer,
+  disabled,
 }: {
+  disabled: boolean;
   value: string;
-  form: UseFormReturn<
+  form?: UseFormReturn<
     {
       title: string;
       explanation: string;
       tags: string[];
+    },
+    any,
+    undefined
+  >;
+  formAnswer?: UseFormReturn<
+    {
+      explanation: string;
     },
     any,
     undefined
@@ -49,7 +60,15 @@ export const QuillEditor = ({
     "color",
     "background",
   ];
-  return (
+
+  if (disabled)
+    return (
+      <div className="flex justify-center items-center p-6">
+        <BounceLoading />
+      </div>
+    );
+
+  return form ? (
     <div>
       <ReactQuill
         className="rounded-md background-light900_dark300 text-dark400_light800"
@@ -71,5 +90,29 @@ export const QuillEditor = ({
         formats={formats}
       />
     </div>
+  ) : (
+    formAnswer && (
+      <div>
+        <ReactQuill
+          className="rounded-md background-light900_dark300 text-dark400_light800"
+          value={value}
+          onChange={(value) => {
+            formAnswer.setValue("explanation", value);
+          }}
+          onBlur={(e) => {
+            if (e && e?.index < 20) {
+              formAnswer.setError("explanation", {
+                type: "required",
+                message: "String must contain at least 20 character(s)",
+              });
+            } else {
+              formAnswer.clearErrors("explanation");
+            }
+          }}
+          modules={modules}
+          formats={formats}
+        />
+      </div>
+    )
   );
 };

@@ -1,9 +1,13 @@
+import { AnswerQuestion } from "@/components/forms/AnswerQuestion";
+import Question from "@/components/forms/Question";
 import { MetricContent } from "@/components/shared/MetricContent";
 import ParseHTML from "@/components/shared/ParseHTML";
 import { TagQuestion } from "@/components/shared/TagQuestion";
+import { Button } from "@/components/ui/button";
 import { getQuestionById } from "@/lib/actions/question.action";
 import { getIdToString } from "@/lib/utils";
 import { ParamsProps } from "@/types";
+import Image from "next/image";
 
 export default async function page({ params }: ParamsProps) {
   const { id } = params;
@@ -90,6 +94,23 @@ export default async function page({ params }: ParamsProps) {
             />
           ))}
         </div>
+      </section>
+      <section>
+        <div className="flex justify-between items-center my-10 max-sm:flex-col max-sm:items-start gap-6">
+          <p className="paragraph-semibold text-dark400_light800">
+            Write your answer here
+          </p>
+          <button className="max-sm:w-full inline-flex items-center justify-center text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-slate-300 bg-slate-900 hover:bg-slate-900/90 dark:bg-slate-50 dark:hover:bg-slate-50/90 h-9 btn light-border-2 gap-1.5 rounded-md border px-4 py-2.5 text-primary-500 shadow-none dark:text-primary-500">
+            <Image
+              src="/assets/icons/stars.svg"
+              alt="Star icon"
+              width={12}
+              height={12}
+            />
+            <p>Generate AI answer</p>
+          </button>
+        </div>
+        <AnswerQuestion />
       </section>
     </>
   );

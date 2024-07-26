@@ -115,7 +115,11 @@ export default function Question() {
                 <span className="text-primary-500">*</span>
               </FormLabel>
               <FormControl className="mt-3.5">
-                <QuillEditor form={form} value={field.value} />
+                <QuillEditor
+                  disabled={isSubmitting}
+                  form={form}
+                  value={field.value}
+                />
               </FormControl>
               <FormDescription className="body-regular mt-2.5 text-light-500">
                 Introduce the problem and expand on what you put in the title.

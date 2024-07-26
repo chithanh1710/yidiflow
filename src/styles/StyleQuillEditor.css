@@ -23,3 +23,7 @@
 .ql-picker-options {
   color: black;
 }
+
+.ql-fill:is(.dark *) {
+  stroke: rgba(255, 255, 255, 0.6);
+}
