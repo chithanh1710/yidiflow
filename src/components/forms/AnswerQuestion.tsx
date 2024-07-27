@@ -16,6 +16,7 @@ import { useState } from "react";
 import { QuillEditor } from "./QuillEditor";
 import { useRouter } from "next/navigation";
 import React from "react";
+import { createAnswer } from "@/lib/actions/answer.action";
 
 const formSchema = z.object({
   explanation: z.string().min(10, {
@@ -23,7 +24,7 @@ const formSchema = z.object({
   }),
 });
 
-export function AnswerQuestion() {
+export function AnswerQuestion({ idQuestion }: { idQuestion: string }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
@@ -40,8 +41,10 @@ export function AnswerQuestion() {
     form.reset();
 
     try {
-      await new Promise((res) => setTimeout(() => res(""), 3000));
-      router.refresh();
+      await createAnswer({
+        content: values.explanation,
+        questionId: idQuestion,
+      });
     } catch (error) {
       console.error(error);
       throw error;

@@ -3,24 +3,21 @@
 import { z } from "zod";
 import { connectToDatabase } from "../mongoose";
 import { formQuestionSchema } from "../validations";
-import { auth } from "@clerk/nextjs/server";
 import Question, { IQuestion } from "@/database/question.model";
 import Tag, { ITag } from "@/database/tag.model";
-import { getUserById } from "./user.action";
 import User, { IUser } from "@/database/user.model";
 import { revalidatePath } from "next/cache";
 import { GetQuestionsParams, QuestionFullParams } from "./shared.types";
 import { PAGE_SIZE } from "@/constants";
-import { skip } from "node:test";
+import { getCurrentUser } from "./user.action";
+import { Error } from "mongoose";
 
 export async function createQuestion(
   params: z.infer<typeof formQuestionSchema>
 ) {
   try {
     await connectToDatabase();
-    const { userId } = auth();
-    const mongoUser = await getUserById({ userId });
-    if (!mongoUser?._id) throw new Error("Not found user");
+    const mongoUser = await getCurrentUser();
     const { explanation: content, tags, title } = params;
     const question = await Question.create({
       title,

@@ -24,7 +24,7 @@ const Tag = (models.Tag || model<ITag>("Tag", TagSchema)) as Model<
   Document<unknown, {}, ITag> &
     ITag &
     Required<{
-      _id: unknown;
+      _id: Schema.Types.ObjectId;
     }>,
   any
 >;

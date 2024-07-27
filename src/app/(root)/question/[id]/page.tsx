@@ -1,17 +1,25 @@
+import AnswerCard from "@/components/cards/AnswerCard";
 import { AnswerQuestion } from "@/components/forms/AnswerQuestion";
 import Question from "@/components/forms/Question";
+import { Filter } from "@/components/shared/Filter";
 import { MetricContent } from "@/components/shared/MetricContent";
 import ParseHTML from "@/components/shared/ParseHTML";
 import { TagQuestion } from "@/components/shared/TagQuestion";
 import { Button } from "@/components/ui/button";
+import { AnswerFilters } from "@/constants/filters";
+import { getAllAnswerById } from "@/lib/actions/answer.action";
 import { getQuestionById } from "@/lib/actions/question.action";
 import { getIdToString } from "@/lib/utils";
-import { ParamsProps } from "@/types";
+import { ParamsProps, URLProps } from "@/types";
 import Image from "next/image";
 
-export default async function page({ params }: ParamsProps) {
+export default async function page({ params, searchParams }: URLProps) {
   const { id } = params;
-  const data = await getQuestionById(id);
+  const dataQuestion = await getQuestionById(id);
+  const dataAnswer = await getAllAnswerById({
+    questionId: id,
+    sortBy: searchParams.filter,
+  });
   const {
     _id: idQuestion,
     tags,
@@ -23,7 +31,7 @@ export default async function page({ params }: ParamsProps) {
     author,
     answers,
     createAt,
-  } = data;
+  } = dataQuestion;
   const { name, username, email, picture, _id: idAuthor } = author;
   return (
     <>
@@ -75,7 +83,7 @@ export default async function page({ params }: ParamsProps) {
           alt="Message icon"
           img="/assets/icons/message.svg"
           title="Answers"
-          value={answers.length}
+          value={downVotes.length}
         />
         <MetricContent
           alt="View icon"
@@ -95,6 +103,15 @@ export default async function page({ params }: ParamsProps) {
           ))}
         </div>
       </section>
+      <section className="my-10">
+        <div className="flex justify-between items-center">
+          <h3 className="primary-text-gradient">{dataAnswer.length} Answers</h3>
+          <Filter isShowListButton={false} dataList={AnswerFilters} />
+        </div>
+        {dataAnswer.map((answer) => (
+          <AnswerCard key={getIdToString(answer._id)} answer={answer} />
+        ))}
+      </section>
       <section>
         <div className="flex justify-between items-center my-10 max-sm:flex-col max-sm:items-start gap-6">
           <p className="paragraph-semibold text-dark400_light800">
@@ -110,7 +127,7 @@ export default async function page({ params }: ParamsProps) {
             <p>Generate AI answer</p>
           </button>
         </div>
-        <AnswerQuestion />
+        <AnswerQuestion idQuestion={getIdToString(idQuestion)} />
       </section>
     </>
   );

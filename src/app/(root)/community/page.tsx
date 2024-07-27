@@ -19,8 +19,8 @@ export default async function page({ searchParams }: SearchParamsProps) {
         <section className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-6 mt-10">
           {allUser.map((user: any) => (
             <Link
-              key={user.clerkId}
-              href={`/profile/${user.clerkId}`}
+              key={user._id}
+              href={`/profile/${user._id}`}
               className="shadow-light100_darknone w-full h-full"
             >
               <UserCard user={user} />

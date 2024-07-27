@@ -10,6 +10,7 @@ export function MetricContent({
   img,
   alt,
   createAt,
+  typePage = "asked",
   classNameImg,
   classNameP,
   isPageQuestionId = false,
@@ -20,6 +21,7 @@ export function MetricContent({
   img: string;
   alt: string;
   createAt?: Date;
+  typePage?: string;
   classNameImg?: string;
   classNameP?: string;
   isPageQuestionId?: boolean;
@@ -36,15 +38,15 @@ export function MetricContent({
       />
       <p
         className={cn(
-          "text-sm flex text-dark100_light900 gap-1 items-center flex-wrap",
+          "flex gap-1 items-center flex-wrap body-semibold text-dark300_light700",
           classNameP
         )}
       >
         {author.name} | {author.username}
         {createAt && (
-          <span className="max-sm:hidden flex">
+          <span className="max-sm:hidden flex small-regular text-light400_light500 mt-0.5 line-clamp-1">
             <Dot />
-            asked {formatDistanceToNow(createAt, { addSuffix: true })}
+            {typePage} {formatDistanceToNow(createAt, { addSuffix: true })}
           </span>
         )}
       </p>

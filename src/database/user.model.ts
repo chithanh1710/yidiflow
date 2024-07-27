@@ -38,7 +38,9 @@ const User = (models.User ||
   {},
   {},
   {},
-  mongoose.Document<unknown, {}, IUser> & IUser & Required<{ _id: unknown }>,
+  mongoose.Document<unknown, {}, IUser> &
+    IUser &
+    Required<{ _id: Schema.Types.ObjectId }>,
   any
 >;
 
