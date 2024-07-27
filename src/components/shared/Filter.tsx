@@ -28,7 +28,7 @@ export function Filter({
       if (curValue) {
         const params = new URLSearchParams(searchParams.toString());
         params.set("filter", curValue);
-        router.replace(pathname + "?" + params, { scroll: false });
+        router.replace(`${pathname}?${params.toString()}`, { scroll: false });
       } else {
         setCurValue(currentFilter);
       }

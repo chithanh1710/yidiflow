@@ -50,6 +50,7 @@ export async function getAllAnswerById(params: GetAnswersParams) {
         break;
       default:
         sort.upVotes = -1;
+        sort.createAt = -1;
         break;
     }
 
@@ -59,6 +60,7 @@ export async function getAllAnswerById(params: GetAnswersParams) {
       .sort(sort)
       .populate<{ author: IUser }>({ path: "author", model: User });
 
+    // await new Promise((res) => setTimeout(() => res(""), 3000));
     return allAnswer as (IAnswer & { author: IUser })[];
   } catch (error) {
     console.error(error);

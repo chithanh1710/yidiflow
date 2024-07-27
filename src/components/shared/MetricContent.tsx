@@ -21,7 +21,7 @@ export function MetricContent({
   img: string;
   alt: string;
   createAt?: Date;
-  typePage?: string;
+  typePage?: "asked" | "answered" | "Answered";
   classNameImg?: string;
   classNameP?: string;
   isPageQuestionId?: boolean;
@@ -34,7 +34,10 @@ export function MetricContent({
         src={img}
         width={24}
         height={24}
-        className={cn("rounded-full object-cover", classNameImg)}
+        className={cn(
+          "rounded-full object-cover aspect-square h-full w-auto",
+          classNameImg
+        )}
       />
       <p
         className={cn(
@@ -44,7 +47,7 @@ export function MetricContent({
       >
         {author.name} | {author.username}
         {createAt && (
-          <span className="max-sm:hidden flex small-regular text-light400_light500 mt-0.5 line-clamp-1">
+          <span className="max-sm:hidden flex items-center small-regular text-light400_light500 mt-0.5 line-clamp-1">
             <Dot />
             {typePage} {formatDistanceToNow(createAt, { addSuffix: true })}
           </span>
@@ -60,7 +63,9 @@ export function MetricContent({
         width={16}
         height={16}
       />
-      <p> asked {formatDistanceToNow(createAt, { addSuffix: true })}</p>
+      <p className={classNameP}>
+        {typePage} {formatDistanceToNow(createAt, { addSuffix: true })}
+      </p>
     </div>
   ) : (
     <div className="flex gap-1">

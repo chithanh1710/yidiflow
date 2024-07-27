@@ -13,7 +13,7 @@ export const QuillEditor = ({
   form?: UseFormReturn<
     {
       title: string;
-      explanation: string;
+      answer: string;
       tags: string[];
     },
     any,
@@ -21,7 +21,7 @@ export const QuillEditor = ({
   >;
   formAnswer?: UseFormReturn<
     {
-      explanation: string;
+      answer: string;
     },
     any,
     undefined
@@ -74,16 +74,16 @@ export const QuillEditor = ({
         className="rounded-md background-light900_dark300 text-dark400_light800"
         value={value}
         onChange={(value) => {
-          form.setValue("explanation", value);
+          form.setValue("answer", value);
         }}
         onBlur={(e) => {
           if (e && e?.index < 20) {
-            form.setError("explanation", {
+            form.setError("answer", {
               type: "required",
               message: "String must contain at least 20 character(s)",
             });
           } else {
-            form.clearErrors("explanation");
+            form.clearErrors("answer");
           }
         }}
         modules={modules}
@@ -97,16 +97,16 @@ export const QuillEditor = ({
           className="rounded-md background-light900_dark300 text-dark400_light800"
           value={value}
           onChange={(value) => {
-            formAnswer.setValue("explanation", value);
+            formAnswer.setValue("answer", value);
           }}
           onBlur={(e) => {
             if (e && e?.index < 20) {
-              formAnswer.setError("explanation", {
+              formAnswer.setError("answer", {
                 type: "required",
                 message: "String must contain at least 20 character(s)",
               });
             } else {
-              formAnswer.clearErrors("explanation");
+              formAnswer.clearErrors("answer");
             }
           }}
           modules={modules}

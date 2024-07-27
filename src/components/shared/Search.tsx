@@ -26,7 +26,7 @@ export function Search({
       } else {
         param.delete(route);
       }
-      router.replace(`${pathname}?${param.toString()}`);
+      router.replace(`${pathname}?${param.toString()}`, { scroll: false });
     }, 500);
 
     return () => clearTimeout(timeout);

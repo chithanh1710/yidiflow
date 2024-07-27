@@ -1,25 +1,21 @@
-import AnswerCard from "@/components/cards/AnswerCard";
+import { ListAnswerCard } from "@/components/cards/ListAnswerCard";
 import { AnswerQuestion } from "@/components/forms/AnswerQuestion";
-import Question from "@/components/forms/Question";
+import BounceLoading from "@/components/loading/BounceLoading";
 import { Filter } from "@/components/shared/Filter";
 import { MetricContent } from "@/components/shared/MetricContent";
 import ParseHTML from "@/components/shared/ParseHTML";
 import { TagQuestion } from "@/components/shared/TagQuestion";
-import { Button } from "@/components/ui/button";
 import { AnswerFilters } from "@/constants/filters";
-import { getAllAnswerById } from "@/lib/actions/answer.action";
 import { getQuestionById } from "@/lib/actions/question.action";
 import { getIdToString } from "@/lib/utils";
-import { ParamsProps, URLProps } from "@/types";
+import { URLProps } from "@/types";
 import Image from "next/image";
+import { Suspense } from "react";
 
 export default async function page({ params, searchParams }: URLProps) {
   const { id } = params;
   const dataQuestion = await getQuestionById(id);
-  const dataAnswer = await getAllAnswerById({
-    questionId: id,
-    sortBy: searchParams.filter,
-  });
+
   const {
     _id: idQuestion,
     tags,
@@ -32,7 +28,9 @@ export default async function page({ params, searchParams }: URLProps) {
     answers,
     createAt,
   } = dataQuestion;
+
   const { name, username, email, picture, _id: idAuthor } = author;
+
   return (
     <>
       <div className="flex justify-between flex-wrap items-center gap-6 max-sm:flex-col-reverse">
@@ -73,10 +71,8 @@ export default async function page({ params, searchParams }: URLProps) {
       </h2>
       <div className="flex flex-wrap gap-4 text-dark100_light900 text-xs max-sm:self-end mt-5 mb-8">
         <MetricContent
-          alt="Up vote icon"
+          alt="Clock icon"
           img="/assets/icons/clock.svg"
-          title="Votes"
-          value={upVotes.length}
           createAt={createAt}
         />
         <MetricContent
@@ -104,13 +100,19 @@ export default async function page({ params, searchParams }: URLProps) {
         </div>
       </section>
       <section className="my-10">
-        <div className="flex justify-between items-center">
-          <h3 className="primary-text-gradient">{dataAnswer.length} Answers</h3>
+        <div className="flex justify-end">
           <Filter isShowListButton={false} dataList={AnswerFilters} />
         </div>
-        {dataAnswer.map((answer) => (
-          <AnswerCard key={getIdToString(answer._id)} answer={answer} />
-        ))}
+        <Suspense
+          key={id + searchParams.filter}
+          fallback={
+            <div className="flex py-10 justify-center items-center">
+              <BounceLoading />
+            </div>
+          }
+        >
+          <ListAnswerCard filter={searchParams.filter} id={id} />
+        </Suspense>
       </section>
       <section>
         <div className="flex justify-between items-center my-10 max-sm:flex-col max-sm:items-start gap-6">

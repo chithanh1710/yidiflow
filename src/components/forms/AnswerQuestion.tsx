@@ -19,8 +19,8 @@ import React from "react";
 import { createAnswer } from "@/lib/actions/answer.action";
 
 const formSchema = z.object({
-  explanation: z.string().min(10, {
-    message: "Explanation must be at least 10 characters.",
+  answer: z.string().min(10, {
+    message: "Answer must be at least 10 characters.",
   }),
 });
 
@@ -31,7 +31,7 @@ export function AnswerQuestion({ idQuestion }: { idQuestion: string }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      explanation: "",
+      answer: "",
     },
   });
 
@@ -42,7 +42,7 @@ export function AnswerQuestion({ idQuestion }: { idQuestion: string }) {
 
     try {
       await createAnswer({
-        content: values.explanation,
+        content: values.answer,
         questionId: idQuestion,
       });
     } catch (error) {
@@ -59,11 +59,11 @@ export function AnswerQuestion({ idQuestion }: { idQuestion: string }) {
         <FormField
           disabled={isSubmitting}
           control={form.control}
-          name="explanation"
+          name="answer"
           render={({ field }) => (
             <FormItem className="flex w-full flex-col gap-3">
               <FormLabel className="paragraph-semibold text-dark400_light800">
-                Detailed explanation of your problem{" "}
+                Detailed answer of your problem{" "}
                 <span className="text-primary-500">*</span>
               </FormLabel>
               <FormControl className="mt-3.5">
