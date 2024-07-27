@@ -26,7 +26,7 @@ export function Search({
       } else {
         param.delete(route);
       }
-      router.replace(`${pathname}?${param.toString()}`);
+      router.replace(`${pathname}?${param.toString()}`, { scroll: false });
     }, 500);
 
     return () => clearTimeout(timeout);
@@ -42,7 +42,7 @@ export function Search({
       <label htmlFor={"search" + route + placeholder}>
         <Image
           alt="Search icon"
-          src="assets/icons/search.svg"
+          src="/assets/icons/search.svg"
           width={26}
           height={26}
         />

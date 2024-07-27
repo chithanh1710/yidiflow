@@ -5,7 +5,6 @@ import { getAllUser } from "@/lib/actions/user.action";
 import { SearchParamsProps } from "@/types";
 import Link from "next/link";
 import { UserCard } from "../../../components/cards/UserCard";
-import { Suspense } from "react";
 
 export default async function page({ searchParams }: SearchParamsProps) {
   const allUser: any = await getAllUser({ searchQuery: searchParams.q });
@@ -20,8 +19,8 @@ export default async function page({ searchParams }: SearchParamsProps) {
         <section className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-6 mt-10">
           {allUser.map((user: any) => (
             <Link
-              key={user.clerkId}
-              href={`/profile/${user.clerkId}`}
+              key={user._id}
+              href={`/profile/${user._id}`}
               className="shadow-light100_darknone w-full h-full"
             >
               <UserCard user={user} />

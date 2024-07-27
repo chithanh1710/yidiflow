@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/contexts/ThemeProvider";
+import { MenuProvider } from "@/components/shared/ToggleMenu";
 
 const inter = Inter({
   subsets: ["vietnamese", "latin"],
@@ -40,7 +41,9 @@ export default function RootLayout({
             },
           }}
         >
-          <ThemeProvider>{children}</ThemeProvider>
+          <ThemeProvider>
+            <MenuProvider>{children}</MenuProvider>
+          </ThemeProvider>
         </ClerkProvider>
       </body>
     </html>

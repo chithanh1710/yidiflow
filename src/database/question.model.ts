@@ -33,7 +33,7 @@ const Question = (models.Question ||
   Document<unknown, {}, IQuestion> &
     IQuestion &
     Required<{
-      _id: unknown;
+      _id: Schema.Types.ObjectId;
     }>,
   any
 >;

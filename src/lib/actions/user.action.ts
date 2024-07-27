@@ -11,6 +11,9 @@ import {
 import { revalidatePath } from "next/cache";
 import Question from "@/database/question.model";
 import { PAGE_SIZE } from "@/constants";
+import { auth } from "@clerk/nextjs/server";
+import console from "console";
+import { Document, Schema } from "mongoose";
 
 export async function getAllUser(params: GetAllUsersParams) {
   try {
@@ -41,6 +44,24 @@ export async function getAllUser(params: GetAllUsersParams) {
       });
 
     return allUser;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function getCurrentUser(): Promise<
+  Document<unknown, {}, IUser> &
+    IUser &
+    Required<{
+      _id: Schema.Types.ObjectId;
+    }>
+> {
+  try {
+    const { userId } = auth();
+    const mongoUser = await getUserById({ userId });
+    if (!mongoUser || !mongoUser._id) throw new Error("Not found user");
+    return mongoUser;
   } catch (error) {
     console.error(error);
     throw error;

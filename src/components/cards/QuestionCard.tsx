@@ -1,11 +1,10 @@
-import Image from "next/image";
-import { Dot } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { TagQuestion } from "../shared/TagQuestion";
 import Link from "next/link";
-import { formatAndDivideNumber, getIdToString } from "@/lib/utils";
+import { getIdToString } from "@/lib/utils";
 import { getAuthorById } from "@/lib/actions/user.action";
 import { QuestionFullParams } from "@/lib/actions/shared.types";
+import { MetricContent } from "../shared/MetricContent";
 
 export async function QuestionCard({
   question,
@@ -15,14 +14,16 @@ export async function QuestionCard({
   const { answers, author, createAt, tags, title, upVotes, views, _id } =
     question;
   const tagsFormat = Array.from(new Set(tags));
-  const { picture, name } = await getAuthorById(getIdToString(author._id));
+  const { picture, name, username } = await getAuthorById(
+    getIdToString(author._id)
+  );
   return (
     <div className="card-wrapper rounded-xl p-9 sm:px-11 text-dark100_light900">
       <span className="sm:hidden text-xs capitalize">
         {formatDistanceToNow(createAt, { addSuffix: true })}
       </span>
       <h3 className="h3-bold text-dark100_light900 line-clamp-1">
-        <Link href={`/ask-question/${_id}`}>{title}</Link>
+        <Link href={`/question/${_id}`}>{title}</Link>
       </h3>
       <div className="my-6 flex gap-2 flex-wrap">
         {tagsFormat.map((tag) => (
@@ -37,7 +38,7 @@ export async function QuestionCard({
           img={picture}
           alt="Image user"
           createAt={createAt}
-          author={{ _id: getIdToString(author._id), name, picture }}
+          author={{ _id: getIdToString(author._id), name, picture, username }}
         />
         <div className="flex flex-wrap gap-4 text-dark100_light900 text-xs">
           <MetricContent
@@ -60,48 +61,6 @@ export async function QuestionCard({
           />
         </div>
       </div>
-    </div>
-  );
-}
-
-function MetricContent({
-  value,
-  title,
-  img,
-  alt,
-  createAt,
-  author,
-}: {
-  value?: number;
-  title?: string;
-  img: string;
-  alt: string;
-  createAt?: Date;
-  author?: { _id: string; picture: string; name: string };
-}) {
-  return author && createAt ? (
-    <Link className="flex gap-2" href={`/profile/${author._id}`}>
-      <Image
-        alt={alt}
-        src={img}
-        width={24}
-        height={24}
-        className="rounded-full object-cover"
-      />
-      <p className="text-sm flex text-dark100_light900 gap-1 items-center flex-wrap">
-        {author.name}
-        <span className="max-sm:hidden flex">
-          <Dot />
-          asked {formatDistanceToNow(createAt, { addSuffix: true })}
-        </span>
-      </p>
-    </Link>
-  ) : (
-    <div className="flex gap-1">
-      <Image alt={alt} src={img} width={16} height={16} />
-      <p>
-        <span>{formatAndDivideNumber(value || 0)}</span> {title}
-      </p>
     </div>
   );
 }

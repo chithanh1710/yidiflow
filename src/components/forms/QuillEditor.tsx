@@ -1,16 +1,27 @@
 import { UseFormReturn } from "react-hook-form";
 import ReactQuill from "react-quill";
+import BounceLoading from "../loading/BounceLoading";
 
 export const QuillEditor = ({
   value,
   form,
+  formAnswer,
+  disabled,
 }: {
+  disabled: boolean;
   value: string;
-  form: UseFormReturn<
+  form?: UseFormReturn<
     {
       title: string;
-      explanation: string;
+      answer: string;
       tags: string[];
+    },
+    any,
+    undefined
+  >;
+  formAnswer?: UseFormReturn<
+    {
+      answer: string;
     },
     any,
     undefined
@@ -20,16 +31,14 @@ export const QuillEditor = ({
     toolbar: [
       [{ header: [1, 2, 3, 4, 5, 6, false] }, { font: [] }],
       [{ size: [] }],
-      ["bold", "italic", "underline", "strike", "blockquote"],
-      [
-        { list: "ordered" },
-        { list: "bullet" },
-        { indent: "-1" },
-        { indent: "+1" },
-      ],
+      ["bold", "italic", "underline", "strike", "blockquote", "code-block"],
+      [{ list: "ordered" }, { list: "bullet" }],
       ["link", "image", "video"],
-      ["clean"],
+      [{ color: [] }, { background: [] }],
     ],
+    clipboard: {
+      matchVisual: false,
+    },
   };
 
   const formats = [
@@ -47,28 +56,63 @@ export const QuillEditor = ({
     "link",
     "image",
     "video",
+    "code-block",
+    "color",
+    "background",
   ];
-  return (
+
+  if (disabled)
+    return (
+      <div className="flex justify-center items-center p-6">
+        <BounceLoading />
+      </div>
+    );
+
+  return form ? (
     <div>
       <ReactQuill
         className="rounded-md background-light900_dark300 text-dark400_light800"
         value={value}
         onChange={(value) => {
-          form.setValue("explanation", value);
+          form.setValue("answer", value);
         }}
         onBlur={(e) => {
           if (e && e?.index < 20) {
-            form.setError("explanation", {
+            form.setError("answer", {
               type: "required",
               message: "String must contain at least 20 character(s)",
             });
           } else {
-            form.clearErrors("explanation");
+            form.clearErrors("answer");
           }
         }}
         modules={modules}
         formats={formats}
       />
     </div>
+  ) : (
+    formAnswer && (
+      <div>
+        <ReactQuill
+          className="rounded-md background-light900_dark300 text-dark400_light800"
+          value={value}
+          onChange={(value) => {
+            formAnswer.setValue("answer", value);
+          }}
+          onBlur={(e) => {
+            if (e && e?.index < 20) {
+              formAnswer.setError("answer", {
+                type: "required",
+                message: "String must contain at least 20 character(s)",
+              });
+            } else {
+              formAnswer.clearErrors("answer");
+            }
+          }}
+          modules={modules}
+          formats={formats}
+        />
+      </div>
+    )
   );
 };

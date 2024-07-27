@@ -12,8 +12,10 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export function Filter({
   dataList,
+  isShowListButton = true,
 }: {
   dataList: { value: string; name: string }[];
+  isShowListButton?: boolean;
 }) {
   const [curValue, setCurValue] = useState("");
   const searchParams = useSearchParams();
@@ -26,7 +28,7 @@ export function Filter({
       if (curValue) {
         const params = new URLSearchParams(searchParams.toString());
         params.set("filter", curValue);
-        router.replace(pathname + "?" + params, { scroll: false });
+        router.replace(`${pathname}?${params.toString()}`, { scroll: false });
       } else {
         setCurValue(currentFilter);
       }
@@ -35,9 +37,13 @@ export function Filter({
 
   return (
     <>
-      <div className="lg:hidden block">
+      <div className={`${isShowListButton ? "lg:hidden block" : "block"}`}>
         <Select value={curValue} onValueChange={(value) => setCurValue(value)}>
-          <SelectTrigger className="body-regular light-border h-14 sm:w-48 w-full px-5 py-2.5 rounded-xl text-dark500_light700 background-light800_dark300">
+          <SelectTrigger
+            className={`body-regular light-border ${
+              isShowListButton ? "h-14 rounded-xl" : ""
+            }  sm:w-48 w-full px-5 py-2.5 text-dark500_light700 background-light800_dark300`}
+          >
             <SelectValue placeholder="Select a Filter" />
           </SelectTrigger>
           <SelectContent>
@@ -49,21 +55,23 @@ export function Filter({
           </SelectContent>
         </Select>
       </div>
-      <div className="hidden gap-3 lg:flex w-full overflow-x-auto max-w-full mt-5">
-        {dataList.map((item) => (
-          <Button
-            onClick={() => setCurValue(item.value)}
-            className={`px-6 py-3 hover:!bg-primary-500 hover:!text-light-900 font-semibold tracking-wide ${
-              item.value === curValue
-                ? "!text-primary-500 bg-primary-500/10 dark:bg-dark-400"
-                : "text-light400_light500 background-light800_dark300"
-            }   `}
-            key={item.value}
-          >
-            {item.name}
-          </Button>
-        ))}
-      </div>
+      {isShowListButton && (
+        <div className="hidden gap-3 lg:flex w-full overflow-x-auto max-w-full mt-5">
+          {dataList.map((item) => (
+            <Button
+              onClick={() => setCurValue(item.value)}
+              className={`px-6 py-3 hover:!bg-primary-500 hover:!text-light-900 font-semibold tracking-wide ${
+                item.value === curValue
+                  ? "!text-primary-500 bg-primary-500/10 dark:bg-dark-400"
+                  : "text-light400_light500 background-light800_dark300"
+              }   `}
+              key={item.value}
+            >
+              {item.name}
+            </Button>
+          ))}
+        </div>
+      )}
     </>
   );
 }
