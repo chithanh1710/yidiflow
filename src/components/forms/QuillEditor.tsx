@@ -13,7 +13,7 @@ export const QuillEditor = ({
   form?: UseFormReturn<
     {
       title: string;
-      answer: string;
+      explanation: string;
       tags: string[];
     },
     any,
@@ -74,16 +74,16 @@ export const QuillEditor = ({
         className="rounded-md background-light900_dark300 text-dark400_light800"
         value={value}
         onChange={(value) => {
-          form.setValue("answer", value);
+          form.setValue("explanation", value);
         }}
         onBlur={(e) => {
           if (e && e?.index < 20) {
-            form.setError("answer", {
+            form.setError("explanation", {
               type: "required",
               message: "String must contain at least 20 character(s)",
             });
           } else {
-            form.clearErrors("answer");
+            form.clearErrors("explanation");
           }
         }}
         modules={modules}
