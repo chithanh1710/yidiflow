@@ -6,17 +6,18 @@ import { IUser } from "@/database/user.model";
 import ParseHTML from "../shared/ParseHTML";
 import { Votes } from "@/components/shared/Votes";
 
-export default function AnswerCard({
+export default async function AnswerCard({
   answer,
+  pageID,
 }: {
   answer: IAnswer & {
     author: IUser;
   };
+  pageID: string;
 }) {
   const { _id, author, upVotes, downVotes, createAt, content } = answer;
   const { picture, _id: idAuthor, name, username } = author;
-  const { hasDownVoted, hasUpVoted } = upVote_DownVote_Save({
-    authorId: idAuthor,
+  const { hasDownVoted, hasUpVoted } = await upVote_DownVote_Save({
     questionId: _id,
     downVotes,
     upVotes,
@@ -56,6 +57,7 @@ export default function AnswerCard({
           </div>
 
           <Votes
+            pageID={pageID}
             type="answer"
             hasDownVoted={!!hasDownVoted}
             hasUpVoted={!!hasUpVoted}

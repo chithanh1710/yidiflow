@@ -11,7 +11,6 @@ export default async function page({ params, searchParams }: URLProps) {
   const { id } = params;
   const { q } = searchParams;
   const allQuestionByTag = await getAllQuestionByTag({ id, searchQuery: q });
-  console.log(allQuestionByTag);
   return (
     <>
       <h1 className="h1-bold text-dark100_light900">

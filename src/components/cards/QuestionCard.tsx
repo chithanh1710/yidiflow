@@ -5,6 +5,7 @@ import { getIdToString } from "@/lib/utils";
 import { getAuthorById } from "@/lib/actions/user.action";
 import { QuestionFullParams } from "@/lib/actions/shared.types";
 import { MetricContent } from "../shared/MetricContent";
+import LinkIncView from "../shared/LinkIncView";
 
 export async function QuestionCard({
   question,
@@ -23,7 +24,7 @@ export async function QuestionCard({
         {formatDistanceToNow(createAt, { addSuffix: true })}
       </span>
       <h3 className="h3-bold text-dark100_light900 line-clamp-1">
-        <Link href={`/question/${_id}`}>{title}</Link>
+        <LinkIncView _id={getIdToString(_id)} title={title} />
       </h3>
       <div className="my-6 flex gap-2 flex-wrap">
         {tagsFormat.map((tag) => (

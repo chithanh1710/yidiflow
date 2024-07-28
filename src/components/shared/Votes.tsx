@@ -10,6 +10,7 @@ export function Votes({
   hasDownVoted,
   hasSaved,
   type,
+  pageID,
 }: {
   upVotes: Schema.Types.ObjectId[];
   downVotes: Schema.Types.ObjectId[];
@@ -18,6 +19,7 @@ export function Votes({
   hasDownVoted: boolean;
   hasSaved?: boolean;
   type: "question" | "answer";
+  pageID: string;
 }) {
   return (
     <form
@@ -30,7 +32,13 @@ export function Votes({
     >
       <button
         name="typeAction"
-        value={JSON.stringify({ name: "upVote", value: hasUpVoted })}
+        value={JSON.stringify({
+          pageID,
+          name: "upVote",
+          type,
+          value: hasUpVoted,
+          itemId,
+        })}
       >
         <MetricContent
           alt="Up vote icon"
@@ -47,7 +55,13 @@ export function Votes({
       </button>
       <button
         name="typeAction"
-        value={JSON.stringify({ name: "downVote", value: hasDownVoted })}
+        value={JSON.stringify({
+          pageID,
+          name: "downVote",
+          value: hasDownVoted,
+          type,
+          itemId,
+        })}
       >
         <MetricContent
           alt="Down vote icon"
@@ -65,7 +79,13 @@ export function Votes({
       {typeof hasSaved !== "undefined" && (
         <button
           name="typeAction"
-          value={JSON.stringify({ name: "upVote", value: hasSaved })}
+          value={JSON.stringify({
+            pageID,
+            name: "save",
+            value: hasSaved,
+            type,
+            itemId,
+          })}
         >
           <MetricContent
             alt="View icon"

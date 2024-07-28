@@ -2,6 +2,7 @@ import { type ClassValue, clsx } from "clsx";
 import { Schema } from "mongoose";
 import { Types } from "mongoose";
 import { twMerge } from "tailwind-merge";
+import { getCurrentUser } from "./actions/user.action";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -26,24 +27,21 @@ export function getIdToString(id: unknown): string {
   throw new Error("Invalid ID");
 }
 
-export function upVote_DownVote_Save({
+export async function upVote_DownVote_Save({
   upVotes,
   downVotes,
-  saved,
-  authorId,
   questionId,
 }: {
   upVotes: Schema.Types.ObjectId[];
   downVotes: Schema.Types.ObjectId[];
-  saved?: Schema.Types.ObjectId[];
-  authorId: any;
   questionId: any;
 }) {
+  const { _id, saved } = await getCurrentUser();
   const hasUpVoted = upVotes.find(
-    (item) => getIdToString(item) === getIdToString(authorId)
+    (item) => getIdToString(item) === getIdToString(_id)
   );
   const hasDownVoted = downVotes.find(
-    (item) => getIdToString(item) === getIdToString(authorId)
+    (item) => getIdToString(item) === getIdToString(_id)
   );
   if (saved) {
     const hasSaved = saved.find(

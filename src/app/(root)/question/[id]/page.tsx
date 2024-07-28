@@ -12,12 +12,10 @@ import { URLProps } from "@/types";
 import Image from "next/image";
 import { Suspense } from "react";
 import { Votes } from "../../../../components/shared/Votes";
-import { Schema } from "mongoose";
 
 export default async function page({ params, searchParams }: URLProps) {
   const { id } = params;
   const dataQuestion = await getQuestionById(id);
-
   const {
     _id: idQuestion,
     tags,
@@ -31,13 +29,11 @@ export default async function page({ params, searchParams }: URLProps) {
     createAt,
   } = dataQuestion;
 
-  const { name, username, email, picture, _id: idAuthor, saved } = author;
-  const { hasDownVoted, hasUpVoted, hasSaved } = upVote_DownVote_Save({
-    authorId: idAuthor,
+  const { name, username, email, picture, _id: idAuthor } = author;
+  const { hasDownVoted, hasUpVoted, hasSaved } = await upVote_DownVote_Save({
     questionId: idQuestion,
     downVotes,
     upVotes,
-    saved,
   });
   return (
     <>
@@ -51,6 +47,7 @@ export default async function page({ params, searchParams }: URLProps) {
           />
         </div>
         <Votes
+          pageID={id}
           type="question"
           hasDownVoted={!!hasDownVoted}
           hasUpVoted={!!hasUpVoted}
@@ -73,7 +70,7 @@ export default async function page({ params, searchParams }: URLProps) {
           alt="Message icon"
           img="/assets/icons/message.svg"
           title="Answers"
-          value={downVotes.length}
+          value={answers.length}
         />
         <MetricContent
           alt="View icon"

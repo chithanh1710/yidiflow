@@ -14,7 +14,6 @@ import {
 } from "../ui/form";
 import { useState } from "react";
 import { QuillEditor } from "./QuillEditor";
-import { useRouter } from "next/navigation";
 import React from "react";
 import { createAnswer } from "@/lib/actions/answer.action";
 
@@ -26,7 +25,6 @@ const formSchema = z.object({
 
 export function AnswerQuestion({ idQuestion }: { idQuestion: string }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -36,7 +34,6 @@ export function AnswerQuestion({ idQuestion }: { idQuestion: string }) {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
     setIsSubmitting(true);
     form.reset();
 

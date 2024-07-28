@@ -19,7 +19,11 @@ export async function ListAnswerCard({
         {dataAnswer.length} Answers
       </h3>
       {dataAnswer.map((answer) => (
-        <AnswerCard key={getIdToString(answer._id)} answer={answer} />
+        <AnswerCard
+          pageID={id}
+          key={getIdToString(answer._id)}
+          answer={answer}
+        />
       ))}
     </>
   );

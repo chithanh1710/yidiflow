@@ -104,19 +104,28 @@ export async function getQuestions(
 export async function getQuestionById(id: string): Promise<QuestionFullParams> {
   try {
     await connectToDatabase();
-    const question: QuestionFullParams | null =
-      await Question.findByIdAndUpdate(id, { $inc: { views: 1 } })
-        .populate({
-          path: "author",
-          model: User,
-        })
-        .populate({
-          path: "tags",
-          model: Tag,
-        })
-        .lean();
+    const question: QuestionFullParams | null = await Question.findById(id)
+      .populate({
+        path: "author",
+        model: User,
+      })
+      .populate({
+        path: "tags",
+        model: Tag,
+      })
+      .lean();
     if (!question) throw new Error("Not found data");
     return question;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function incView(id: string) {
+  try {
+    await connectToDatabase();
+    await Question.updateOne({ _id: id }, { $inc: { views: 1 } });
   } catch (error) {
     console.error(error);
     throw error;
