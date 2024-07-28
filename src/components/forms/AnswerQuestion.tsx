@@ -16,6 +16,9 @@ import { useState } from "react";
 import { QuillEditor } from "./QuillEditor";
 import React from "react";
 import { createAnswer } from "@/lib/actions/answer.action";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { scrollToElementWithOffset } from "@/lib/utils";
 
 const formSchema = z.object({
   answer: z.string().min(10, {
@@ -25,7 +28,7 @@ const formSchema = z.object({
 
 export function AnswerQuestion({ idQuestion }: { idQuestion: string }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -38,10 +41,22 @@ export function AnswerQuestion({ idQuestion }: { idQuestion: string }) {
     form.reset();
 
     try {
-      await createAnswer({
-        content: values.answer,
-        questionId: idQuestion,
+      await toast.promise(
+        createAnswer({
+          content: values.answer,
+          questionId: idQuestion,
+        }),
+        {
+          loading: "Submitting your answer...",
+          success: "Answer submitted successfully!",
+          error:
+            "An error occurred while submitting your answer. Please try again.",
+        }
+      );
+      router.replace(`/question/${idQuestion}?filter=recent`, {
+        scroll: false,
       });
+      scrollToElementWithOffset("#section-answer", 200);
     } catch (error) {
       console.error(error);
       throw error;

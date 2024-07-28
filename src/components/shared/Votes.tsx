@@ -1,6 +1,8 @@
+"use client";
 import { MetricContent } from "@/components/shared/MetricContent";
 import { handleVoteOrSave } from "@/lib/actions/vote.action";
 import { Schema } from "mongoose";
+import toast from "react-hot-toast";
 
 export function Votes({
   upVotes,
@@ -28,13 +30,21 @@ export function Votes({
           ? "flex flex-wrap gap-4 text-dark100_light900 text-xs max-sm:self-end"
           : "flex items-center gap-4"
       }
-      action={handleVoteOrSave}
+      action={async (formData) => {
+        const data = formData.get("typeAction") as string;
+        const { name, value } = JSON.parse(data);
+        await toast.promise(handleVoteOrSave(formData), {
+          loading: "Submitting your vote...",
+          success: value ? "Vote removed successfully!" : `${name} successful!`,
+          error: "An error occurred. Please try again.",
+        });
+      }}
     >
       <button
         name="typeAction"
         value={JSON.stringify({
           pageID,
-          name: "upVote",
+          name: "Up vote",
           type,
           value: hasUpVoted,
           itemId,
@@ -57,7 +67,7 @@ export function Votes({
         name="typeAction"
         value={JSON.stringify({
           pageID,
-          name: "downVote",
+          name: "Down vote",
           value: hasDownVoted,
           type,
           itemId,
@@ -81,7 +91,7 @@ export function Votes({
           name="typeAction"
           value={JSON.stringify({
             pageID,
-            name: "save",
+            name: "Save",
             value: hasSaved,
             type,
             itemId,

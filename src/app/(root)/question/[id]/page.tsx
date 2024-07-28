@@ -90,7 +90,7 @@ export default async function page({ params, searchParams }: URLProps) {
           ))}
         </div>
       </section>
-      <section className="my-10">
+      <section id="section-answer" className="my-10">
         <div className="flex justify-end">
           <Filter isShowListButton={false} dataList={AnswerFilters} />
         </div>

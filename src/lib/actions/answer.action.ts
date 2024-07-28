@@ -8,6 +8,7 @@ import { GetAnswersParams } from "./shared.types";
 import { PAGE_SIZE } from "@/constants";
 import User, { IUser } from "@/database/user.model";
 import Question from "@/database/question.model";
+import { redirect } from "next/navigation";
 
 export async function createAnswer(params: {
   questionId: string;
@@ -45,7 +46,7 @@ export async function getAllAnswerById(params: GetAnswersParams) {
         sort.upVotes = -1;
         break;
       case "lowestUpvotes":
-        sort.downVotes = -1;
+        sort.upVotes = 1;
         break;
       case "recent":
         sort.createAt = -1;

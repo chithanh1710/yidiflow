@@ -50,3 +50,17 @@ export async function upVote_DownVote_Save({
     return { hasDownVoted, hasSaved, hasUpVoted };
   } else return { hasDownVoted, hasUpVoted };
 }
+
+export const scrollToElementWithOffset = (selector: string, offset: number) => {
+  const element = document.querySelector(selector);
+  if (element) {
+    const elementPosition =
+      element.getBoundingClientRect().top + window.pageYOffset;
+    const offsetPosition = elementPosition - offset;
+
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: "smooth",
+    });
+  }
+};

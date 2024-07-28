@@ -19,6 +19,7 @@ import { QuillEditor } from "./QuillEditor";
 import { X } from "lucide-react";
 import { createQuestion } from "@/lib/actions/question.action";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function Question() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -36,9 +37,14 @@ export default function Question() {
   async function onSubmit(values: z.infer<typeof formQuestionSchema>) {
     setIsSubmitting(true);
     form.reset();
-
     try {
-      await createQuestion(values);
+      await toast.promise(createQuestion(values), {
+        loading: "Submitting your question...",
+        success: "Question submitted successfully!",
+        error:
+          "An error occurred while submitting your question. Please try again.",
+      });
+
       router.push("/");
     } catch (error) {
       console.error(error);

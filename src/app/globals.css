@@ -6,6 +6,10 @@
 @import url("../styles/prism.css");
 @import url("../styles/StyleQuillEditor.css");
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: "Inter", sans-serif;
 }

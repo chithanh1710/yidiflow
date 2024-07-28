@@ -12,7 +12,7 @@ export async function handleVoteOrSave(formData: FormData) {
   const { _id: userId } = await getCurrentUser();
   if (type === "question") {
     switch (name) {
-      case "upVote":
+      case "Up vote":
         if (value) {
           // TH: ĐÃ TỒN TẠI
           // XOÁ NÓ RA KHỎI upVotes
@@ -39,7 +39,7 @@ export async function handleVoteOrSave(formData: FormData) {
           );
         }
         break;
-      case "downVote":
+      case "Down vote":
         if (value) {
           // TH: ĐÃ TỒN TẠI
           // XOÁ NÓ RA KHỎI downVotes
@@ -66,7 +66,7 @@ export async function handleVoteOrSave(formData: FormData) {
           );
         }
         break;
-      case "save":
+      case "Save":
         if (value) {
           await User.updateOne({ _id: userId }, { $pull: { saved: itemId } });
         } else {
@@ -82,7 +82,7 @@ export async function handleVoteOrSave(formData: FormData) {
     }
   } else {
     switch (name) {
-      case "upVote":
+      case "Up vote":
         if (value) {
           // TH: ĐÃ TỒN TẠI
           // XOÁ NÓ RA KHỎI upVotes
@@ -109,7 +109,7 @@ export async function handleVoteOrSave(formData: FormData) {
           );
         }
         break;
-      case "downVote":
+      case "Down vote":
         if (value) {
           // TH: ĐÃ TỒN TẠI
           // XOÁ NÓ RA KHỎI downVotes
