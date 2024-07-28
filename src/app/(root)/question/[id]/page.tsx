@@ -7,10 +7,12 @@ import ParseHTML from "@/components/shared/ParseHTML";
 import { TagQuestion } from "@/components/shared/TagQuestion";
 import { AnswerFilters } from "@/constants/filters";
 import { getQuestionById } from "@/lib/actions/question.action";
-import { getIdToString } from "@/lib/utils";
+import { getIdToString, upVote_DownVote_Save } from "@/lib/utils";
 import { URLProps } from "@/types";
 import Image from "next/image";
 import { Suspense } from "react";
+import { Votes } from "../../../../components/shared/Votes";
+import { Schema } from "mongoose";
 
 export default async function page({ params, searchParams }: URLProps) {
   const { id } = params;
@@ -29,8 +31,14 @@ export default async function page({ params, searchParams }: URLProps) {
     createAt,
   } = dataQuestion;
 
-  const { name, username, email, picture, _id: idAuthor } = author;
-
+  const { name, username, email, picture, _id: idAuthor, saved } = author;
+  const { hasDownVoted, hasUpVoted, hasSaved } = upVote_DownVote_Save({
+    authorId: idAuthor,
+    questionId: idQuestion,
+    downVotes,
+    upVotes,
+    saved,
+  });
   return (
     <>
       <div className="flex justify-between flex-wrap items-center gap-6 max-sm:flex-col-reverse">
@@ -42,29 +50,15 @@ export default async function page({ params, searchParams }: URLProps) {
             author={{ _id: getIdToString(idAuthor), name, picture, username }}
           />
         </div>
-        <div className="flex flex-wrap gap-4 text-dark100_light900 text-xs max-sm:self-end">
-          <MetricContent
-            alt="Up vote icon"
-            img="/assets/icons/upVote.svg"
-            title="Up vote"
-            isPageQuestionId={true}
-            value={upVotes.length}
-            classNameP="flex-center background-light700_dark400 min-w-[18px] rounded-sm p-1"
-          />
-          <MetricContent
-            alt="Down vote icon"
-            img="/assets/icons/downVote.svg"
-            title="Down vote"
-            isPageQuestionId={true}
-            value={answers.length}
-            classNameP="flex-center background-light700_dark400 min-w-[18px] rounded-sm p-1"
-          />
-          <MetricContent
-            alt="View icon"
-            img="/assets/icons/star-red.svg"
-            classNameImg="text-primary-500"
-          />
-        </div>
+        <Votes
+          type="question"
+          hasDownVoted={!!hasDownVoted}
+          hasUpVoted={!!hasUpVoted}
+          hasSaved={!!hasSaved}
+          itemId={getIdToString(idQuestion)}
+          downVotes={downVotes}
+          upVotes={upVotes}
+        />
       </div>
       <h2 className="h2-semibold text-dark200_light900 mt-3.5 w-full text-left">
         {title}

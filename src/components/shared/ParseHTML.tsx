@@ -32,7 +32,7 @@ export default function ParseHTML({ content }: { content: string }) {
   return (
     <div
       ref={containerRef}
-      className="markdown w-full min-w-full content-container"
+      className="markdown w-full min-w-full content-container py-5"
     />
   );
 }

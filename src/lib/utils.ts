@@ -1,4 +1,5 @@
 import { type ClassValue, clsx } from "clsx";
+import { Schema } from "mongoose";
 import { Types } from "mongoose";
 import { twMerge } from "tailwind-merge";
 
@@ -23,4 +24,31 @@ export function getIdToString(id: unknown): string {
     return id.toString();
   }
   throw new Error("Invalid ID");
+}
+
+export function upVote_DownVote_Save({
+  upVotes,
+  downVotes,
+  saved,
+  authorId,
+  questionId,
+}: {
+  upVotes: Schema.Types.ObjectId[];
+  downVotes: Schema.Types.ObjectId[];
+  saved?: Schema.Types.ObjectId[];
+  authorId: any;
+  questionId: any;
+}) {
+  const hasUpVoted = upVotes.find(
+    (item) => getIdToString(item) === getIdToString(authorId)
+  );
+  const hasDownVoted = downVotes.find(
+    (item) => getIdToString(item) === getIdToString(authorId)
+  );
+  if (saved) {
+    const hasSaved = saved.find(
+      (item) => getIdToString(item) === getIdToString(questionId)
+    );
+    return { hasDownVoted, hasSaved, hasUpVoted };
+  } else return { hasDownVoted, hasUpVoted };
 }

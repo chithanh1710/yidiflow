@@ -44,10 +44,6 @@ export async function createQuestion(
       $push: { tags: { $each: tagDocuments } },
     });
 
-    await User.findOneAndUpdate(mongoUser._id, {
-      $addToSet: { saved: question._id },
-    });
-
     revalidatePath("/", "page");
   } catch (error) {
     console.error(error);
@@ -108,16 +104,17 @@ export async function getQuestions(
 export async function getQuestionById(id: string): Promise<QuestionFullParams> {
   try {
     await connectToDatabase();
-    const question: QuestionFullParams | null = await Question.findById(id)
-      .populate({
-        path: "author",
-        model: User,
-      })
-      .populate({
-        path: "tags",
-        model: Tag,
-      })
-      .lean();
+    const question: QuestionFullParams | null =
+      await Question.findByIdAndUpdate(id, { $inc: { views: 1 } })
+        .populate({
+          path: "author",
+          model: User,
+        })
+        .populate({
+          path: "tags",
+          model: Tag,
+        })
+        .lean();
     if (!question) throw new Error("Not found data");
     return question;
   } catch (error) {

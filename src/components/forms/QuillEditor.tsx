@@ -1,6 +1,7 @@
 import { UseFormReturn } from "react-hook-form";
-import ReactQuill from "react-quill";
 import BounceLoading from "../loading/BounceLoading";
+import dynamic from "next/dynamic";
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 export const QuillEditor = ({
   value,

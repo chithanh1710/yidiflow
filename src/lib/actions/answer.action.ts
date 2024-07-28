@@ -7,6 +7,7 @@ import { revalidatePath } from "next/cache";
 import { GetAnswersParams } from "./shared.types";
 import { PAGE_SIZE } from "@/constants";
 import User, { IUser } from "@/database/user.model";
+import Question from "@/database/question.model";
 
 export async function createAnswer(params: {
   questionId: string;
@@ -16,10 +17,15 @@ export async function createAnswer(params: {
     await connectToDatabase();
     const mongoUser = await getCurrentUser();
     const { content, questionId } = params;
-    await Answer.create({
+
+    const newAnswer = await Answer.create({
       content,
       author: mongoUser._id,
       question: questionId,
+    });
+
+    await Question.findByIdAndUpdate(questionId, {
+      $push: { answers: newAnswer._id },
     });
     revalidatePath(`/question/${questionId}`, "page");
   } catch (error) {
@@ -34,7 +40,6 @@ export async function getAllAnswerById(params: GetAnswersParams) {
     const { questionId, page = 1, pageSize = PAGE_SIZE, sortBy } = params;
     const skip = (page - 1) * pageSize;
     let sort: any = {};
-
     switch (sortBy) {
       case "highestUpvotes":
         sort.upVotes = -1;
