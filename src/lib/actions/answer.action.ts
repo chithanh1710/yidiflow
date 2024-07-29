@@ -35,7 +35,9 @@ export async function createAnswer(params: {
   }
 }
 
-export async function getAllAnswerById(params: GetAnswersParams) {
+export async function getAllAnswerById(
+  params: GetAnswersParams
+): Promise<{ allAnswer: (IAnswer & { author: IUser })[]; totalPages: number }> {
   try {
     await connectToDatabase();
     const { questionId, page = 1, pageSize = PAGE_SIZE, sortBy } = params;
@@ -60,14 +62,19 @@ export async function getAllAnswerById(params: GetAnswersParams) {
         break;
     }
 
-    const allAnswer = await Answer.find({ question: questionId })
+    const countAnswer = await Answer.countDocuments({ question: questionId });
+    const allAnswer = (await Answer.find({ question: questionId })
       .skip(skip)
       .limit(pageSize)
       .sort(sort)
-      .populate<{ author: IUser }>({ path: "author", model: User });
+      .populate<{ author: IUser }>({
+        path: "author",
+        model: User,
+      })) as (IAnswer & { author: IUser })[];
 
     // await new Promise((res) => setTimeout(() => res(""), 3000));
-    return allAnswer as (IAnswer & { author: IUser })[];
+    const totalPages = Math.ceil(countAnswer / pageSize);
+    return { allAnswer, totalPages };
   } catch (error) {
     console.error(error);
     throw error;

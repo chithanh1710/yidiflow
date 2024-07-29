@@ -15,6 +15,7 @@ import { Votes } from "../../../../components/shared/Votes";
 
 export default async function page({ params, searchParams }: URLProps) {
   const { id } = params;
+  const { page, filter } = searchParams;
   const dataQuestion = await getQuestionById(id);
   const {
     _id: idQuestion,
@@ -95,14 +96,14 @@ export default async function page({ params, searchParams }: URLProps) {
           <Filter isShowListButton={false} dataList={AnswerFilters} />
         </div>
         <Suspense
-          key={id + searchParams.filter}
+          key={id + filter}
           fallback={
             <div className="flex py-10 justify-center items-center">
               <BounceLoading />
             </div>
           }
         >
-          <ListAnswerCard filter={searchParams.filter} id={id} />
+          <ListAnswerCard curPage={Number(page) || 1} filter={filter} id={id} />
         </Suspense>
       </section>
       <section>

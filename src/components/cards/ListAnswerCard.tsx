@@ -1,30 +1,36 @@
 import AnswerCard from "@/components/cards/AnswerCard";
 import { getAllAnswerById } from "@/lib/actions/answer.action";
 import { getIdToString } from "@/lib/utils";
+import PaginationPage from "../shared/PaginationPage";
 
 export async function ListAnswerCard({
   id,
   filter,
+  curPage,
 }: {
   id: string;
   filter?: string;
+  curPage: number;
 }) {
-  const dataAnswer = await getAllAnswerById({
+  const { allAnswer, totalPages } = await getAllAnswerById({
     questionId: id,
     sortBy: filter,
   });
   return (
     <>
       <h3 className="primary-text-gradient h3-bold mb-2">
-        {dataAnswer.length} Answers
+        {allAnswer.length} Answers
       </h3>
-      {dataAnswer.map((answer) => (
+      {allAnswer.map((answer) => (
         <AnswerCard
           pageID={id}
           key={getIdToString(answer._id)}
           answer={answer}
         />
       ))}
+      {totalPages > 1 && (
+        <PaginationPage curPage={curPage} totalPages={totalPages} />
+      )}
     </>
   );
 }
