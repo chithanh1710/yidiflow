@@ -3,6 +3,7 @@ import { Schema } from "mongoose";
 import { Types } from "mongoose";
 import { twMerge } from "tailwind-merge";
 import { getCurrentUser } from "./actions/user.action";
+import { auth } from "@clerk/nextjs/server";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -36,7 +37,12 @@ export async function upVote_DownVote_Save({
   downVotes: Schema.Types.ObjectId[];
   questionId: any;
 }) {
-  const { _id, saved } = await getCurrentUser();
+  const user = await getCurrentUser();
+  let _id, saved;
+  if (user) {
+    _id = user._id;
+    saved = user.saved;
+  } else return {};
   const hasUpVoted = upVotes.find(
     (item) => getIdToString(item) === getIdToString(_id)
   );

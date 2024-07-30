@@ -37,10 +37,9 @@ export function AnswerQuestion({ idQuestion }: { idQuestion: string }) {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsSubmitting(true);
-    form.reset();
-
     try {
+      setIsSubmitting(true);
+      form.reset();
       await toast.promise(
         createAnswer({
           content: values.answer,
@@ -48,18 +47,20 @@ export function AnswerQuestion({ idQuestion }: { idQuestion: string }) {
         }),
         {
           loading: "Submitting your answer...",
-          success: "Answer submitted successfully!",
-          error:
+          success: () => {
+            router.replace(`/question/${idQuestion}?filter=recent`, {
+              scroll: false,
+            });
+            scrollToElementWithOffset("#section-answer", 200);
+            return "Answer submitted successfully!";
+          },
+          error: (err) =>
+            err.message ||
             "An error occurred while submitting your answer. Please try again.",
         }
       );
-      router.replace(`/question/${idQuestion}?filter=recent`, {
-        scroll: false,
-      });
-      scrollToElementWithOffset("#section-answer", 200);
     } catch (error) {
-      console.error(error);
-      throw error;
+      console.error("Answer Error:", error);
     } finally {
       setIsSubmitting(false);
     }

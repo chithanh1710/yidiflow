@@ -5,7 +5,6 @@ import { getCollections, getQuestions } from "@/lib/actions/question.action";
 import { QuestionFullParams } from "@/lib/actions/shared.types";
 import { getIdToString } from "@/lib/utils";
 import { Suspense } from "react";
-import BounceLoading from "../loading/BounceLoading";
 import { ListSkeletonHomePage } from "../skeleton/SkeletonHomePage";
 
 export async function ListQuestion({

@@ -8,7 +8,6 @@ import { GetAnswersParams } from "./shared.types";
 import { PAGE_SIZE } from "@/constants";
 import User, { IUser } from "@/database/user.model";
 import Question from "@/database/question.model";
-import { redirect } from "next/navigation";
 
 export async function createAnswer(params: {
   questionId: string;
@@ -17,8 +16,8 @@ export async function createAnswer(params: {
   try {
     await connectToDatabase();
     const mongoUser = await getCurrentUser();
+    if (!mongoUser || !mongoUser._id) throw new Error("You need to login");
     const { content, questionId } = params;
-
     const newAnswer = await Answer.create({
       content,
       author: mongoUser._id,

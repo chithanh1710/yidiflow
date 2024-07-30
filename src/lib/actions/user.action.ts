@@ -51,17 +51,10 @@ export async function getAllUser(params: GetAllUsersParams) {
   }
 }
 
-export async function getCurrentUser(): Promise<
-  Document<unknown, {}, IUser> &
-    IUser &
-    Required<{
-      _id: Schema.Types.ObjectId;
-    }>
-> {
+export async function getCurrentUser() {
   try {
     const { userId } = auth();
     const mongoUser = await getUserById({ userId });
-    if (!mongoUser || !mongoUser._id) throw new Error("Not found user");
     return mongoUser;
   } catch (error) {
     console.error(error);

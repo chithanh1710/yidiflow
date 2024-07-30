@@ -7,140 +7,124 @@ import { getCurrentUser } from "./user.action";
 import { revalidatePath } from "next/cache";
 
 export async function handleVoteOrSave(formData: FormData) {
-  const data = formData.get("typeAction") as string;
-  const { name, type, value, itemId, pageID } = JSON.parse(data);
-  const { _id: userId } = await getCurrentUser();
-  if (type === "question") {
-    switch (name) {
-      case "Up vote":
-        if (value) {
-          // TH: ĐÃ TỒN TẠI
-          // XOÁ NÓ RA KHỎI upVotes
-          await Question.updateOne(
-            { _id: itemId },
-            { $pull: { upVotes: userId } }
-          );
-        } else {
-          // TH: KHÔNG TỒN TẠI
-          const question = await Question.findOne({ _id: itemId });
+  try {
+    const mongoUser = await getCurrentUser();
+    if (!mongoUser || !mongoUser._id) throw new Error("You need to login");
 
-          if (question?.downVotes.includes(userId)) {
-            // NẾU TỒN TẠI TRONG downVotes THÌ XOÁ ĐI
-            await Question.updateOne(
-              { _id: itemId },
-              { $pull: { downVotes: userId } }
-            );
-          }
+    const data = formData.get("typeAction") as string;
+    if (!data) throw new Error("No action data found");
 
-          // CUỐI CÙNG LÀ THÊM VÀO upVotes
-          await Question.updateOne(
-            { _id: itemId },
-            { $addToSet: { upVotes: userId } }
-          );
-        }
-        break;
-      case "Down vote":
-        if (value) {
-          // TH: ĐÃ TỒN TẠI
-          // XOÁ NÓ RA KHỎI downVotes
-          await Question.updateOne(
-            { _id: itemId },
-            { $pull: { downVotes: userId } }
-          );
-        } else {
-          // TH: KHÔNG TỒN TẠI
-          const question = await Question.findOne({ _id: itemId });
+    const parsedData = JSON.parse(data);
+    const { name, type, value, itemId, pageID } = parsedData;
+    const { _id: userId } = mongoUser;
 
-          if (question?.upVotes.includes(userId)) {
-            // NẾU TỒN TẠI TRONG upVotes THÌ XOÁ ĐI
+    if (type === "question") {
+      const question = await Question.findOne({ _id: itemId });
+      if (!question) throw new Error("Question not found");
+
+      switch (name) {
+        case "Up vote":
+          if (value) {
             await Question.updateOne(
               { _id: itemId },
               { $pull: { upVotes: userId } }
             );
+          } else {
+            if (question.downVotes.includes(userId)) {
+              await Question.updateOne(
+                { _id: itemId },
+                { $pull: { downVotes: userId } }
+              );
+            }
+            await Question.updateOne(
+              { _id: itemId },
+              { $addToSet: { upVotes: userId } }
+            );
           }
-
-          // CUỐI CÙNG LÀ THÊM VÀO downVotes
-          await Question.updateOne(
-            { _id: itemId },
-            { $addToSet: { downVotes: userId } }
-          );
-        }
-        break;
-      case "Save":
-        if (value) {
-          await User.updateOne({ _id: userId }, { $pull: { saved: itemId } });
-        } else {
-          await User.updateOne(
-            { _id: userId },
-            { $addToSet: { saved: itemId } }
-          );
-        }
-        break;
-      default:
-        console.error("Action error");
-        throw new Error("Action unknown");
-    }
-  } else {
-    switch (name) {
-      case "Up vote":
-        if (value) {
-          // TH: ĐÃ TỒN TẠI
-          // XOÁ NÓ RA KHỎI upVotes
-          await Answer.updateOne(
-            { _id: itemId },
-            { $pull: { upVotes: userId } }
-          );
-        } else {
-          // TH: KHÔNG TỒN TẠI
-          const answer = await Answer.findOne({ _id: itemId });
-
-          if (answer?.downVotes.includes(userId)) {
-            // NẾU TỒN TẠI TRONG downVotes THÌ XOÁ ĐI
-            await Answer.updateOne(
+          break;
+        case "Down vote":
+          if (value) {
+            await Question.updateOne(
               { _id: itemId },
               { $pull: { downVotes: userId } }
             );
+          } else {
+            if (question.upVotes.includes(userId)) {
+              await Question.updateOne(
+                { _id: itemId },
+                { $pull: { upVotes: userId } }
+              );
+            }
+            await Question.updateOne(
+              { _id: itemId },
+              { $addToSet: { downVotes: userId } }
+            );
           }
+          break;
+        case "Save":
+          if (value) {
+            await User.updateOne({ _id: userId }, { $pull: { saved: itemId } });
+          } else {
+            await User.updateOne(
+              { _id: userId },
+              { $addToSet: { saved: itemId } }
+            );
+          }
+          break;
+        default:
+          throw new Error("Unknown action name");
+      }
+    } else {
+      const answer = await Answer.findOne({ _id: itemId });
+      if (!answer) throw new Error("Answer not found");
 
-          // CUỐI CÙNG LÀ THÊM VÀO upVotes
-          await Answer.updateOne(
-            { _id: itemId },
-            { $addToSet: { upVotes: userId } }
-          );
-        }
-        break;
-      case "Down vote":
-        if (value) {
-          // TH: ĐÃ TỒN TẠI
-          // XOÁ NÓ RA KHỎI downVotes
-          await Answer.updateOne(
-            { _id: itemId },
-            { $pull: { downVotes: userId } }
-          );
-        } else {
-          // TH: KHÔNG TỒN TẠI
-          const answer = await Answer.findOne({ _id: itemId });
-
-          if (answer?.upVotes.includes(userId)) {
-            // NẾU TỒN TẠI TRONG upVotes THÌ XOÁ ĐI
+      switch (name) {
+        case "Up vote":
+          if (value) {
             await Answer.updateOne(
               { _id: itemId },
               { $pull: { upVotes: userId } }
             );
+          } else {
+            if (answer.downVotes.includes(userId)) {
+              await Answer.updateOne(
+                { _id: itemId },
+                { $pull: { downVotes: userId } }
+              );
+            }
+            await Answer.updateOne(
+              { _id: itemId },
+              { $addToSet: { upVotes: userId } }
+            );
           }
-
-          // CUỐI CÙNG LÀ THÊM VÀO downVotes
-          await Answer.updateOne(
-            { _id: itemId },
-            { $addToSet: { downVotes: userId } }
-          );
-        }
-        break;
-      default:
-        console.error("Action error");
-        throw new Error("Action unknown");
+          break;
+        case "Down vote":
+          if (value) {
+            await Answer.updateOne(
+              { _id: itemId },
+              { $pull: { downVotes: userId } }
+            );
+          } else {
+            if (answer.upVotes.includes(userId)) {
+              await Answer.updateOne(
+                { _id: itemId },
+                { $pull: { upVotes: userId } }
+              );
+            }
+            await Answer.updateOne(
+              { _id: itemId },
+              { $addToSet: { downVotes: userId } }
+            );
+          }
+          break;
+        default:
+          throw new Error("Unknown action name");
+      }
     }
+
+    await revalidatePath(`/question/${pageID}`);
+  } catch (error) {
+    console.error("Server Error:", error);
+    throw error;
   }
-
-  revalidatePath(`/question/${pageID}`, "page");
 }
