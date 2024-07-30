@@ -4,6 +4,7 @@ import { GetAllTagsParams } from "./shared.types";
 import { PAGE_SIZE } from "@/constants";
 import { error } from "console";
 import Question from "@/database/question.model";
+import { notFound } from "next/navigation";
 
 export async function getTag(id: string): Promise<ITag> {
   try {
@@ -99,7 +100,7 @@ export async function getAllQuestionByTag({
       options: { skip: skip, limit: pageSize, sort: sortOptions },
     });
 
-    if (!tags) throw new Error("Tag id not found");
+    if (!tags) notFound();
 
     const totalItems = await Question.countDocuments({
       _id: { $in: tags?.questions.map((question: any) => question._id) },
@@ -108,7 +109,7 @@ export async function getAllQuestionByTag({
     const totalPages = Math.ceil(totalItems / pageSize);
 
     return { tags, totalPages };
-  } catch {
+  } catch (error) {
     console.error(error);
     throw error;
   }

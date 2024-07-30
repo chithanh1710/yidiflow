@@ -17,6 +17,7 @@ import { getCurrentUser } from "./user.action";
 import { Error, model } from "mongoose";
 import page from "@/app/(root)/(home)/page";
 import { skip } from "node:test";
+import { notFound } from "next/navigation";
 
 export async function createQuestion(
   params: z.infer<typeof formQuestionSchema>
@@ -107,7 +108,7 @@ export async function getQuestionById(id: string): Promise<QuestionFullParams> {
         model: Tag,
       })
       .lean();
-    if (!question) throw new Error("Not found data");
+    if (!question) notFound();
     return question;
   } catch (error) {
     console.error(error);
