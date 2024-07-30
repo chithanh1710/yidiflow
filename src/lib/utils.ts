@@ -1,6 +1,8 @@
 import { type ClassValue, clsx } from "clsx";
+import { Schema } from "mongoose";
 import { Types } from "mongoose";
 import { twMerge } from "tailwind-merge";
+import { getCurrentUser } from "./actions/user.action";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -24,3 +26,41 @@ export function getIdToString(id: unknown): string {
   }
   throw new Error("Invalid ID");
 }
+
+export async function upVote_DownVote_Save({
+  upVotes,
+  downVotes,
+  questionId,
+}: {
+  upVotes: Schema.Types.ObjectId[];
+  downVotes: Schema.Types.ObjectId[];
+  questionId: any;
+}) {
+  const { _id, saved } = await getCurrentUser();
+  const hasUpVoted = upVotes.find(
+    (item) => getIdToString(item) === getIdToString(_id)
+  );
+  const hasDownVoted = downVotes.find(
+    (item) => getIdToString(item) === getIdToString(_id)
+  );
+  if (saved) {
+    const hasSaved = saved.find(
+      (item) => getIdToString(item) === getIdToString(questionId)
+    );
+    return { hasDownVoted, hasSaved, hasUpVoted };
+  } else return { hasDownVoted, hasUpVoted };
+}
+
+export const scrollToElementWithOffset = (selector: string, offset: number) => {
+  const element = document.querySelector(selector);
+  if (element) {
+    const elementPosition =
+      element.getBoundingClientRect().top + window.pageYOffset;
+    const offsetPosition = elementPosition - offset;
+
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: "smooth",
+    });
+  }
+};

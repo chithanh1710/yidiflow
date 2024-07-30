@@ -1,7 +1,6 @@
 import { Filter } from "@/components/shared/Filter";
 import NoResult from "@/components/shared/NoResult";
 import { Search } from "@/components/shared/Search";
-import { TagQuestion } from "@/components/shared/TagQuestion";
 import { TagFilters } from "@/constants/filters";
 import { getAllTag } from "@/lib/actions/tag.action";
 import { getIdToString } from "@/lib/utils";
@@ -22,7 +21,7 @@ export default async function page() {
           {allTag.map((tag) => (
             <Link
               key={getIdToString(tag._id)}
-              href={`/tags/${tag._id}`}
+              href={`/tags/${encodeURIComponent(tag.name)}/${tag._id}`}
               className="shadow-light100_darknone w-full h-full"
             >
               <article className="background-light900_dark200 light-border flex w-full flex-col gap-3 items-start justify-center rounded-2xl border p-8">

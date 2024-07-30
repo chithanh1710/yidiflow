@@ -7,15 +7,16 @@ import ParseHTML from "@/components/shared/ParseHTML";
 import { TagQuestion } from "@/components/shared/TagQuestion";
 import { AnswerFilters } from "@/constants/filters";
 import { getQuestionById } from "@/lib/actions/question.action";
-import { getIdToString } from "@/lib/utils";
+import { getIdToString, upVote_DownVote_Save } from "@/lib/utils";
 import { URLProps } from "@/types";
 import Image from "next/image";
 import { Suspense } from "react";
+import { Votes } from "../../../../components/shared/Votes";
 
 export default async function page({ params, searchParams }: URLProps) {
   const { id } = params;
+  const { page, filter } = searchParams;
   const dataQuestion = await getQuestionById(id);
-
   const {
     _id: idQuestion,
     tags,
@@ -30,7 +31,11 @@ export default async function page({ params, searchParams }: URLProps) {
   } = dataQuestion;
 
   const { name, username, email, picture, _id: idAuthor } = author;
-
+  const { hasDownVoted, hasUpVoted, hasSaved } = await upVote_DownVote_Save({
+    questionId: idQuestion,
+    downVotes,
+    upVotes,
+  });
   return (
     <>
       <div className="flex justify-between flex-wrap items-center gap-6 max-sm:flex-col-reverse">
@@ -42,29 +47,16 @@ export default async function page({ params, searchParams }: URLProps) {
             author={{ _id: getIdToString(idAuthor), name, picture, username }}
           />
         </div>
-        <div className="flex flex-wrap gap-4 text-dark100_light900 text-xs max-sm:self-end">
-          <MetricContent
-            alt="Up vote icon"
-            img="/assets/icons/upVote.svg"
-            title="Up vote"
-            isPageQuestionId={true}
-            value={upVotes.length}
-            classNameP="flex-center background-light700_dark400 min-w-[18px] rounded-sm p-1"
-          />
-          <MetricContent
-            alt="Down vote icon"
-            img="/assets/icons/downVote.svg"
-            title="Down vote"
-            isPageQuestionId={true}
-            value={answers.length}
-            classNameP="flex-center background-light700_dark400 min-w-[18px] rounded-sm p-1"
-          />
-          <MetricContent
-            alt="View icon"
-            img="/assets/icons/star-red.svg"
-            classNameImg="text-primary-500"
-          />
-        </div>
+        <Votes
+          pageID={id}
+          type="question"
+          hasDownVoted={!!hasDownVoted}
+          hasUpVoted={!!hasUpVoted}
+          hasSaved={!!hasSaved}
+          itemId={getIdToString(idQuestion)}
+          downVotes={downVotes}
+          upVotes={upVotes}
+        />
       </div>
       <h2 className="h2-semibold text-dark200_light900 mt-3.5 w-full text-left">
         {title}
@@ -79,7 +71,7 @@ export default async function page({ params, searchParams }: URLProps) {
           alt="Message icon"
           img="/assets/icons/message.svg"
           title="Answers"
-          value={downVotes.length}
+          value={answers.length}
         />
         <MetricContent
           alt="View icon"
@@ -99,19 +91,19 @@ export default async function page({ params, searchParams }: URLProps) {
           ))}
         </div>
       </section>
-      <section className="my-10">
+      <section id="section-answer" className="my-10">
         <div className="flex justify-end">
           <Filter isShowListButton={false} dataList={AnswerFilters} />
         </div>
         <Suspense
-          key={id + searchParams.filter}
+          key={id + filter}
           fallback={
             <div className="flex py-10 justify-center items-center">
               <BounceLoading />
             </div>
           }
         >
-          <ListAnswerCard filter={searchParams.filter} id={id} />
+          <ListAnswerCard curPage={Number(page) || 1} filter={filter} id={id} />
         </Suspense>
       </section>
       <section>
