@@ -3,8 +3,6 @@ import { Filter } from "@/components/shared/Filter";
 import { QuestionFilters } from "@/constants/filters";
 import ButtonAskQuestion from "@/components/shared/ButtonAskQuestion";
 import { SearchParamsProps } from "@/types";
-import { Suspense } from "react";
-import BounceLoading from "@/components/loading/BounceLoading";
 import { ListQuestion } from "../../../components/shared/ListQuestion";
 
 export default async function page({ searchParams }: SearchParamsProps) {
