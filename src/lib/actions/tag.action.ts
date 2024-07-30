@@ -4,8 +4,6 @@ import { GetAllTagsParams } from "./shared.types";
 import { PAGE_SIZE } from "@/constants";
 import { error } from "console";
 import Question from "@/database/question.model";
-import { skip } from "node:test";
-import page from "@/app/(root)/(home)/page";
 
 export async function getTag(id: string): Promise<ITag> {
   try {
@@ -61,25 +59,55 @@ export async function getAllQuestionByTag({
   pageSize = PAGE_SIZE,
   searchQuery = "",
   page = 1,
+  filter,
 }: {
   page?: number;
   id: string;
   pageSize?: number;
   searchQuery?: string;
+  filter?: string;
 }) {
   try {
     await connectToDatabase();
     const skip = (page - 1) * pageSize;
+    let queryConditions: any = {
+      title: { $regex: searchQuery, $options: "i" },
+    };
+    let sortOptions = {};
+    switch (filter) {
+      case "popular":
+        sortOptions = { views: -1 };
+        break;
+      case "recent":
+        sortOptions = { createAt: -1 };
+        break;
+      case "name":
+        sortOptions = { title: 1 };
+        break;
+      case "old":
+        sortOptions = { createAt: 1 };
+        break;
+      default:
+        sortOptions = { createAt: -1 };
+        break;
+    }
+
     const tags = await Tag.findById(id).populate({
       path: "questions",
       model: Question,
       match: { title: { $regex: searchQuery, $options: "i" } },
-      options: { skip: skip, limit: pageSize },
+      options: { skip: skip, limit: pageSize, sort: sortOptions },
     });
 
     if (!tags) throw new Error("Tag id not found");
 
-    return tags;
+    const totalItems = await Question.countDocuments({
+      _id: { $in: tags?.questions.map((question: any) => question._id) },
+      ...queryConditions,
+    });
+    const totalPages = Math.ceil(totalItems / pageSize);
+
+    return { tags, totalPages };
   } catch {
     console.error(error);
     throw error;

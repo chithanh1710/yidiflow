@@ -19,21 +19,12 @@ export default async function page({ searchParams }: SearchParamsProps) {
         <Search route="q" placeholder="Search questions..." />
         <Filter dataList={QuestionFilters} />
       </div>
-      <Suspense
-        key={q + filter + page}
-        fallback={
-          <div className="mt-14">
-            <BounceLoading />
-          </div>
-        }
-      >
-        <ListQuestion
-          isCollection={true}
-          q={q}
-          filter={filter}
-          page={Number(page)}
-        />
-      </Suspense>
+      <ListQuestion
+        isCollection={true}
+        q={q}
+        filter={filter}
+        page={Number(page)}
+      />
     </>
   );
 }

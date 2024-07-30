@@ -5,9 +5,16 @@ import { getAllUser } from "@/lib/actions/user.action";
 import { SearchParamsProps } from "@/types";
 import Link from "next/link";
 import { UserCard } from "../../../components/cards/UserCard";
+import PaginationPage from "@/components/shared/PaginationPage";
+import { Suspense } from "react";
+import BounceLoading from "@/components/loading/BounceLoading";
 
 export default async function page({ searchParams }: SearchParamsProps) {
-  const allUser: any = await getAllUser({ searchQuery: searchParams.q });
+  const { q = "", page = 1, filter = "" } = searchParams;
+  const { allUser, totalPages } = await getAllUser({
+    searchQuery: q,
+    filter,
+  });
   return (
     <>
       <h1 className="h1-bold text-dark100_light900">All Users</h1>
@@ -15,16 +22,43 @@ export default async function page({ searchParams }: SearchParamsProps) {
         <Search route="q" placeholder="Search amazing minds here..." />
         <Filter dataList={UserFilters} />
       </div>
+      <ListUser
+        filter={filter}
+        q={q}
+        allUser={allUser}
+        page={Number(page)}
+        totalPages={totalPages}
+      />
+    </>
+  );
+}
+
+function ListUser({
+  allUser,
+  totalPages,
+  page,
+  q,
+  filter,
+}: {
+  allUser: any;
+  totalPages: number;
+  page: number;
+  q: string;
+  filter: string;
+}) {
+  return (
+    <Suspense
+      fallback={
+        <div className="mt-14">
+          <BounceLoading />
+        </div>
+      }
+      key={page + q + filter}
+    >
       {allUser.length > 0 ? (
         <section className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-6 mt-10">
           {allUser.map((user: any) => (
-            <Link
-              key={user._id}
-              href={`/profile/${user._id}`}
-              className="shadow-light100_darknone w-full h-full"
-            >
-              <UserCard user={user} />
-            </Link>
+            <UserCard key={user._id} user={user} />
           ))}
         </section>
       ) : (
@@ -35,6 +69,9 @@ export default async function page({ searchParams }: SearchParamsProps) {
           </Link>
         </div>
       )}
-    </>
+      {totalPages > 1 && (
+        <PaginationPage curPage={Number(page) || 1} totalPages={totalPages} />
+      )}
+    </Suspense>
   );
 }

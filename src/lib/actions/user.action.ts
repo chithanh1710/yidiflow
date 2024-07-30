@@ -34,6 +34,7 @@ export async function getAllUser(params: GetAllUsersParams) {
       query.reputation = { $gt: 0 };
     }
 
+    const totalItems = await User.countDocuments(query);
     const allUser = await User.find(query)
       .skip(skip)
       .limit(pageSize)
@@ -42,8 +43,8 @@ export async function getAllUser(params: GetAllUsersParams) {
         path: "saved",
         model: Question,
       });
-
-    return allUser;
+    const totalPages = Math.ceil(totalItems / pageSize);
+    return { allUser, totalPages };
   } catch (error) {
     console.error(error);
     throw error;

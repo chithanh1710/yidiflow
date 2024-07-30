@@ -4,6 +4,9 @@ import PaginationPage from "@/components/shared/PaginationPage";
 import { getCollections, getQuestions } from "@/lib/actions/question.action";
 import { QuestionFullParams } from "@/lib/actions/shared.types";
 import { getIdToString } from "@/lib/utils";
+import { Suspense } from "react";
+import BounceLoading from "../loading/BounceLoading";
+import { ListSkeletonHomePage } from "../skeleton/SkeletonHomePage";
 
 export async function ListQuestion({
   q,
@@ -36,7 +39,7 @@ export async function ListQuestion({
     dataTotalPages = totalPages;
   }
   return (
-    <>
+    <Suspense fallback={<ListSkeletonHomePage />} key={q + filter + page}>
       <div className="mt-12 flex flex-col gap-6">
         {dataQuestions.length > 0 ? (
           dataQuestions.map((question) => (
@@ -55,6 +58,6 @@ export async function ListQuestion({
         )}
       </div>
       <PaginationPage curPage={Number(page) || 1} totalPages={dataTotalPages} />
-    </>
+    </Suspense>
   );
 }

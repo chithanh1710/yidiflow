@@ -4,8 +4,6 @@ import { HomePageFilters } from "@/constants/filters";
 import ButtonAskQuestion from "@/components/shared/ButtonAskQuestion";
 import { SearchParamsProps } from "@/types";
 import { ListQuestion } from "@/components/shared/ListQuestion";
-import { Suspense } from "react";
-import BounceLoading from "@/components/loading/BounceLoading";
 export default async function page({ searchParams }: SearchParamsProps) {
   const { q = "", filter = "", page = 1 } = searchParams;
   return (
@@ -18,21 +16,12 @@ export default async function page({ searchParams }: SearchParamsProps) {
         <Search route="q" placeholder="Search questions..." />
         <Filter dataList={HomePageFilters} />
       </div>
-      <Suspense
-        fallback={
-          <div className="mt-14">
-            <BounceLoading />
-          </div>
-        }
-        key={q + filter + page}
-      >
-        <ListQuestion
-          isCollection={false}
-          filter={filter}
-          page={Number(page)}
-          q={q}
-        />
-      </Suspense>
+      <ListQuestion
+        isCollection={false}
+        filter={filter}
+        page={Number(page)}
+        q={q}
+      />
     </>
   );
 }
