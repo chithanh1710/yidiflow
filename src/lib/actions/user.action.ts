@@ -13,13 +13,12 @@ import Question from "@/database/question.model";
 import { PAGE_SIZE } from "@/constants";
 import { auth } from "@clerk/nextjs/server";
 import console from "console";
-import { Document, Schema } from "mongoose";
+import { Skip } from "../utils";
 
 export async function getAllUser(params: GetAllUsersParams) {
   try {
     await connectToDatabase();
     const { filter, page = 1, pageSize = PAGE_SIZE, searchQuery } = params;
-    const skip = (page - 1) * pageSize;
     let query: any = {};
 
     if (searchQuery) {
@@ -34,7 +33,10 @@ export async function getAllUser(params: GetAllUsersParams) {
       query.reputation = { $gt: 0 };
     }
 
+    const skip = Skip(page, pageSize);
     const totalItems = await User.countDocuments(query);
+    const totalPages = Math.ceil(totalItems / pageSize);
+
     const allUser = await User.find(query)
       .skip(skip)
       .limit(pageSize)
@@ -43,7 +45,6 @@ export async function getAllUser(params: GetAllUsersParams) {
         path: "saved",
         model: Question,
       });
-    const totalPages = Math.ceil(totalItems / pageSize);
     return { allUser, totalPages };
   } catch (error) {
     console.error(error);

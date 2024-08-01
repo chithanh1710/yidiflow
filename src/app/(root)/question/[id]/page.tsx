@@ -15,7 +15,7 @@ import { Votes } from "../../../../components/shared/Votes";
 
 export default async function page({ params, searchParams }: URLProps) {
   const { id } = params;
-  const { page, filter } = searchParams;
+  const { page = 1, filter } = searchParams;
   const dataQuestion = await getQuestionById(id);
   const {
     _id: idQuestion,
@@ -29,7 +29,6 @@ export default async function page({ params, searchParams }: URLProps) {
     answers,
     createAt,
   } = dataQuestion;
-
   const { name, username, email, picture, _id: idAuthor } = author;
   const { hasDownVoted, hasUpVoted, hasSaved } = await upVote_DownVote_Save({
     questionId: idQuestion,
@@ -103,7 +102,7 @@ export default async function page({ params, searchParams }: URLProps) {
             </div>
           }
         >
-          <ListAnswerCard curPage={Number(page) || 1} filter={filter} id={id} />
+          <ListAnswerCard curPage={Number(page)} filter={filter} id={id} />
         </Suspense>
       </section>
       <section>

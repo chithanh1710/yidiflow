@@ -28,9 +28,7 @@ export async function ListAnswerCard({
           answer={answer}
         />
       ))}
-      {totalPages > 1 && (
-        <PaginationPage curPage={curPage} totalPages={totalPages} />
-      )}
+      <PaginationPage curPage={curPage} totalPages={totalPages} />
     </>
   );
 }

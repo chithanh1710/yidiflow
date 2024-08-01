@@ -20,6 +20,7 @@ export async function ListQuestion({
 }) {
   let dataQuestions: QuestionFullParams[];
   let dataTotalPages: number;
+
   if (isCollection) {
     const { questions, totalPages } = await getCollections({
       page: Number(page),
@@ -56,7 +57,7 @@ export async function ListQuestion({
           />
         )}
       </div>
-      <PaginationPage curPage={Number(page) || 1} totalPages={dataTotalPages} />
+      <PaginationPage curPage={Number(page)} totalPages={dataTotalPages} />
     </Suspense>
   );
 }

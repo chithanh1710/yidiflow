@@ -14,31 +14,7 @@ const ThemeContext = createContext<IThemeContextType | undefined>(undefined);
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [mode, setMode] = useState("dark");
 
-  useEffect(() => {
-    const userPrefersDark =
-      window.matchMedia &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches;
-
-    setMode(userPrefersDark ? "dark" : "light");
-
-    const handleThemeChange = () => {
-      const newColorScheme = window.matchMedia("(prefers-color-scheme: dark)")
-        .matches
-        ? "dark"
-        : "light";
-      setMode(newColorScheme);
-    };
-
-    window
-      .matchMedia("(prefers-color-scheme: dark)")
-      .addEventListener("change", handleThemeChange);
-
-    return () => {
-      window
-        .matchMedia("(prefers-color-scheme: dark)")
-        .removeEventListener("change", handleThemeChange);
-    };
-  }, []);
+  useEffect(() => setMode(localStorage.getItem("theme") || "dark"), []);
 
   useEffect(() => {
     if (mode === "dark") {

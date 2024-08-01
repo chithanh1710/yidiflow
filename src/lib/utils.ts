@@ -3,7 +3,7 @@ import { Schema } from "mongoose";
 import { Types } from "mongoose";
 import { twMerge } from "tailwind-merge";
 import { getCurrentUser } from "./actions/user.action";
-import { auth } from "@clerk/nextjs/server";
+import { notFound } from "next/navigation";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -70,3 +70,11 @@ export const scrollToElementWithOffset = (selector: string, offset: number) => {
     });
   }
 };
+
+export function Skip(page: number, pageSize: number): number {
+  if (page <= 0) {
+    notFound();
+  } else {
+    return (page - 1) * pageSize;
+  }
+}

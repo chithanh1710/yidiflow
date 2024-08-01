@@ -8,6 +8,7 @@ import { GetAnswersParams } from "./shared.types";
 import { PAGE_SIZE } from "@/constants";
 import User, { IUser } from "@/database/user.model";
 import Question from "@/database/question.model";
+import { Skip } from "../utils";
 
 export async function createAnswer(params: {
   questionId: string;
@@ -40,7 +41,6 @@ export async function getAllAnswerById(
   try {
     await connectToDatabase();
     const { questionId, page = 1, pageSize = PAGE_SIZE, sortBy } = params;
-    const skip = (page - 1) * pageSize;
     let sort: any = {};
     switch (sortBy) {
       case "highestUpvotes":
@@ -61,7 +61,9 @@ export async function getAllAnswerById(
         break;
     }
 
+    const skip = Skip(page, pageSize);
     const countAnswer = await Answer.countDocuments({ question: questionId });
+    const totalPages = Math.ceil(countAnswer / pageSize);
     const allAnswer = (await Answer.find({ question: questionId })
       .skip(skip)
       .limit(pageSize)
@@ -71,8 +73,6 @@ export async function getAllAnswerById(
         model: User,
       })) as (IAnswer & { author: IUser })[];
 
-    // await new Promise((res) => setTimeout(() => res(""), 3000));
-    const totalPages = Math.ceil(countAnswer / pageSize);
     return { allAnswer, totalPages };
   } catch (error) {
     console.error(error);

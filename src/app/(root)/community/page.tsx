@@ -69,9 +69,8 @@ function ListUser({
           </Link>
         </div>
       )}
-      {totalPages > 1 && (
-        <PaginationPage curPage={Number(page) || 1} totalPages={totalPages} />
-      )}
+
+      <PaginationPage curPage={Number(page)} totalPages={totalPages} />
     </Suspense>
   );
 }

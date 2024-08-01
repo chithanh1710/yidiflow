@@ -1,23 +1,17 @@
 "use server";
 
-import { any, number, z } from "zod";
+import { z } from "zod";
 import { connectToDatabase } from "../mongoose";
 import { formQuestionSchema } from "../validations";
 import Question, { IQuestion } from "@/database/question.model";
 import Tag, { ITag } from "@/database/tag.model";
 import User, { IUser } from "@/database/user.model";
 import { revalidatePath } from "next/cache";
-import {
-  GetQuestionsParams,
-  GetSavedQuestionsParams,
-  QuestionFullParams,
-} from "./shared.types";
+import { GetQuestionsParams, QuestionFullParams } from "./shared.types";
 import { PAGE_SIZE } from "@/constants";
 import { getCurrentUser } from "./user.action";
-import { Error, model } from "mongoose";
-import page from "@/app/(root)/(home)/page";
-import { skip } from "node:test";
 import { notFound } from "next/navigation";
+import { Skip } from "../utils";
 
 export async function createQuestion(
   params: z.infer<typeof formQuestionSchema>
@@ -25,15 +19,17 @@ export async function createQuestion(
   try {
     await connectToDatabase();
     const mongoUser = await getCurrentUser();
+    if (!mongoUser || !mongoUser._id) throw new Error("Not found user");
     const { explanation: content, tags, title } = params;
     const question = await Question.create({
       title,
       content,
       author: mongoUser._id,
     });
+    const uniqueTags = [...new Set(tags.map((tag) => tag.toLowerCase()))];
     const tagDocuments = [];
 
-    for (const tag of tags) {
+    for (const tag of uniqueTags) {
       const existingTag = await Tag.findOneAndUpdate(
         {
           name: { $regex: new RegExp(`^${tag}$`, "i") },
@@ -67,7 +63,6 @@ export async function getQuestions(
     filter = "",
     searchQuery = "",
   } = params;
-  const skip = (page - 1) * pageSize;
   try {
     await connectToDatabase();
     const { optionFilter, queryConditions } = queryOptionQuestion(
@@ -75,7 +70,10 @@ export async function getQuestions(
       searchQuery
     );
 
+    const skip = Skip(page, pageSize);
     const totalItems = await Question.countDocuments(queryConditions);
+    const totalPages = Math.ceil(totalItems / pageSize);
+
     const questions: QuestionFullParams[] = await Question.find(queryConditions)
       .skip(skip)
       .limit(pageSize)
@@ -87,7 +85,6 @@ export async function getQuestions(
       .sort(optionFilter)
       .lean();
 
-    const totalPages = Math.ceil(totalItems / pageSize);
     return { questions, totalPages };
   } catch (error) {
     console.error("Get question error", error);
@@ -141,8 +138,12 @@ export async function getCollections(
     searchQuery
   );
 
-  const { _id } = await getCurrentUser();
-  const skip = (page - 1) * pageSize;
+  const mongoUser = await getCurrentUser();
+  if (!mongoUser || !mongoUser._id) throw new Error("Not found user");
+  const { _id } = mongoUser;
+
+  const skip = Skip(page, pageSize);
+
   const { saved: questions } = (await User.findById(_id).populate({
     path: "saved",
     model: Question,
@@ -157,7 +158,6 @@ export async function getCollections(
     _id: { $in: questions.map((q: any) => q._id) },
     ...queryConditions,
   });
-
   const totalPages = Math.ceil(totalQuestions / pageSize);
 
   return { questions, totalPages };
